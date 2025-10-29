@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - InmueblesApp{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-4 mb-4">
+        <i class="fas fa-building"></i> Bienvenido a InmueblesApp
+    </h1>
+    <p class="lead mb-5">La mejor plataforma para gestionar tus propiedades en arriendo</p>
+    
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-home fa-3x text-primary mb-3"></i>
+                    <h3>Gestiona Inmuebles</h3>
+                    <p>Registra y administra tus propiedades de forma fácil y rápida</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-contract fa-3x text-success mb-3"></i>
+                    <h3>Contratos Digitales</h3>
+                    <p>Crea y firma contratos de manera digital y segura</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-money-bill-wave fa-3x text-warning mb-3"></i>
+                    <h3>Control de Pagos</h3>
+                    <p>Gestiona pagos y genera cuentas de cobro automáticamente</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'core:registro' %}" class="btn btn-primary btn-lg w-100">
+                <i class="fas fa-user-plus"></i> Registrarse
+            </a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'core:login' %}" class="btn btn-outline-primary btn-lg w-100">
+                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mt-5 mb-5">
+    <div class="col-12 text-center mb-4">
+        <h2>¿Por qué elegir InmueblesApp?</h2>
+    </div>
+    
+    <div class="col-md-3 text-center mb-3">
+        <i class="fas fa-shield-alt fa-2x text-primary mb-2"></i>
+        <h5>Seguridad</h5>
+        <p class="text-muted">Tus datos protegidos con Firebase</p>
+    </div>
+    
+    <div class="col-md-3 text-center mb-3">
+        <i class="fas fa-mobile-alt fa-2x text-success mb-2"></i>
+        <h5>Responsive</h5>
+        <p class="text-muted">Accede desde cualquier dispositivo</p>
+    </div>
+    
+    <div class="col-md-3 text-center mb-3">
+        <i class="fas fa-bell fa-2x text-warning mb-2"></i>
+        <h5>Notificaciones</h5>
+        <p class="text-muted">Mantente informado en tiempo real</p>
+    </div>
+    
+    <div class="col-md-3 text-center mb-3">
+        <i class="fas fa-chart-line fa-2x text-info mb-2"></i>
+        <h5>Reportes</h5>
+        <p class="text-muted">Estadísticas detalladas de tu negocio</p>
+    </div>
+</div>
+{% endblock %}

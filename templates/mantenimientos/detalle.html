@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detalle Mantenimiento - InmueblesApp{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'mantenimientos:listar' %}">Mantenimientos</a></li>
+            <li class="breadcrumb-item active">{{ mantenimiento.numero_ticket }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Información del mantenimiento -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools"></i> {{ mantenimiento.numero_ticket }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h4>{{ mantenimiento.get_tipo_display }}</h4>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong><i class="fas fa-building"></i> Inmueble:</strong><br>
+                                {{ mantenimiento.inmueble.titulo }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong><i class="fas fa-map-marker-alt"></i> Dirección:</strong><br>
+                                {{ mantenimiento.inmueble.direccion }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {% if mantenimiento.ubicacion_especifica %}
+                    <p class="mb-2">
+                        <strong><i class="fas fa-map-pin"></i> Ubicación específica:</strong><br>
+                        {{ mantenimiento.ubicacion_especifica }}
+                    </p>
+                    {% endif %}
+
+                    <p class="mb-2">
+                        <strong><i class="fas fa-align-left"></i> Descripción:</strong><br>
+                        {{ mantenimiento.descripcion|linebreaks }}
+                    </p>
+
+                    {% if mantenimiento.imagen %}
+                    <div class="mt-3">
+                        <strong><i class="fas fa-camera"></i> Foto del problema:</strong><br>
+                        <img src="{{ mantenimiento.imagen.url }}" 
+                             class="img-fluid rounded mt-2" 
+                             alt="Foto del problema"
+                             style="max-height: 400px;">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Seguimiento -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-comments"></i> Seguimiento y Comentarios</h5>
+                </div>
+                <div class="card-body">
+                    {% if seguimientos %}
+                    <div class="timeline">
+                        {% for seguimiento in seguimientos %}
+                        <div class="mb-3 p-3 bg-light rounded">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ seguimiento.usuario.get_full_name }}</strong>
+                                <small class="text-muted">{{ seguimiento.fecha|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            <p class="mb-0 mt-2">{{ seguimiento.comentario|linebreaks }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No hay comentarios aún</p>
+                    {% endif %}
+
+                    <!-- Agregar comentario -->
+                    {% if mantenimiento.estado not in 'completado,cancelado' %}
+                    <hr>
+                    <h6>Agregar Comentario</h6>
+                    <form method="post" action="{% url 'mantenimientos:seguimiento' mantenimiento.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea name="comentario" class="form-control" rows="3" 
+                                      placeholder="Escribe un comentario..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-comment"></i> Agregar Comentario
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel lateral -->
+        <div class="col-lg-4">
+            <!-- Estado y prioridad -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h6 class="text-muted mb-3">Estado Actual</h6>
+                    {% if mantenimiento.estado == 'pendiente' %}
+                    <span class="badge bg-warning fs-5">{{ mantenimiento.get_estado_display }}</span>
+                    {% elif mantenimiento.estado == 'en_revision' %}
+                    <span class="badge bg-info fs-5">{{ mantenimiento.get_estado_display }}</span>
+                    {% elif mantenimiento.estado == 'aprobado' %}
+                    <span class="badge bg-primary fs-5">{{ mantenimiento.get_estado_display }}</span>
+                    {% elif mantenimiento.estado == 'en_progreso' %}
+                    <span class="badge bg-secondary fs-5">{{ mantenimiento.get_estado_display }}</span>
+                    {% elif mantenimiento.estado == 'completado' %}
+                    <span class="badge bg-success fs-5">{{ mantenimiento.get_estado_display }}</span>
+                    {% else %}
+                    <span class="badge bg-danger fs-5">{{ mantenimiento.get_estado_display }}</span>
+                    {% endif %}
+
+                    <hr>
+
+                    <h6 class="text-muted mb-3">Prioridad</h6>
+                    {% if mantenimiento.prioridad == 'urgente' %}
+                    <span class="badge bg-danger fs-5">Urgente</span>
+                    {% elif mantenimiento.prioridad == 'alta' %}
+                    <span class="badge bg-warning fs-5">Alta</span>
+                    {% elif mantenimiento.prioridad == 'media' %}
+                    <span class="badge bg-info fs-5">Media</span>
+                    {% else %}
+                    <span class="badge bg-secondary fs-5">Baja</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Fechas -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-calendar"></i> Fechas</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">
+                        <strong>Solicitud:</strong><br>
+                        {{ mantenimiento.fecha_solicitud|date:"d/m/Y" }}
+                    </p>
+                    {% if mantenimiento.fecha_revision %}
+                    <p class="mb-2">
+                        <strong>Revisión:</strong><br>
+                        {{ mantenimiento.fecha_revision|date:"d/m/Y" }}
+                    </p>
+                    {% endif %}
+                    {% if mantenimiento.fecha_inicio %}
+                    <p class="mb-2">
+                        <strong>Inicio:</strong><br>
+                        {{ mantenimiento.fecha_inicio|date:"d/m/Y" }}
+                    </p>
+                    {% endif %}
+                    {% if mantenimiento.fecha_completado %}
+                    <p class="mb-0">
+                        <strong>Completado:</strong><br>
+                        {{ mantenimiento.fecha_completado|date:"d/m/Y" }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Costos -->
+            {% if mantenimiento.costo_estimado or mantenimiento.costo_final %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-dollar-sign"></i> Costos</h6>
+                </div>
+                <div class="card-body">
+                    {% if mantenimiento.costo_estimado %}
+                    <p class="mb-2">
+                        <strong>Estimado:</strong><br>
+                        ${{ mantenimiento.costo_estimado|floatformat:0 }}
+                    </p>
+                    {% endif %}
+                    {% if mantenimiento.costo_final %}
+                    <p class="mb-2">
+                        <strong>Final:</strong><br>
+                        <span class="text-success fs-5">${{ mantenimiento.costo_final|floatformat:0 }}</span>
+                    </p>
+                    {% endif %}
+                    {% if mantenimiento.responsable_costo %}
+                    <p class="mb-0">
+                        <strong>Responsable:</strong><br>
+                        {{ mantenimiento.get_responsable_costo_display }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Acciones -->
+            {% if user.tipo_usuario == 'propietario' and mantenimiento.estado == 'pendiente' %}
+            <div class="card">
+                <div class="card-body">
+                    <a href="{% url 'mantenimientos:gestionar' mantenimiento.id %}" 
+                       class="btn btn-success w-100">
+                        <i class="fas fa-cog"></i> Gestionar Solicitud
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

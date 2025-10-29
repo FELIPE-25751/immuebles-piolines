@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <!-- Tarjeta de Perfil -->
+        <div class="card">
+            <div class="card-body text-center">
+                {% if user.foto_perfil %}
+                <img src="{{ user.foto_perfil.url }}" class="rounded-circle mb-3" width="150" height="150" alt="Foto de perfil">
+                {% else %}
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px; font-size: 3rem;">
+                    {{ user.first_name.0 }}{{ user.last_name.0 }}
+                </div>
+                {% endif %}
+                
+                <h3>{{ user.get_full_name }}</h3>
+                <p class="text-muted">@{{ user.username }}</p>
+                <span class="badge bg-primary mb-3">{{ user.get_tipo_usuario_display }}</span>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editarPerfilModal">
+                        <i class="fas fa-edit"></i> Editar Perfil
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información Adicional -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Información</h5>
+            </div>
+            <div class="card-body">
+                <p><i class="fas fa-envelope"></i> <strong>Email:</strong><br>{{ user.email }}</p>
+                <p><i class="fas fa-id-card"></i> <strong>Cédula:</strong><br>{{ user.cedula }}</p>
+                <p><i class="fas fa-phone"></i> <strong>Teléfono:</strong><br>{{ user.telefono|default:"No especificado" }}</p>
+                <p><i class="fas fa-map-marker-alt"></i> <strong>Ciudad:</strong><br>{{ user.ciudad|default:"No especificado" }}</p>
+                <p><i class="fas fa-calendar"></i> <strong>Miembro desde:</strong><br>{{ user.date_joined|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <!-- Estadísticas -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h2 class="text-primary">
+                            {% if user.tipo_usuario == 'propietario %}
+                            {{ user.inmuebles_propietario.count }}
+                            {% else %}
+                            {{ user.contratos_inquilino.filter.count }}
+                            {% endif %}
+                        </h2>
+                        <p class="mb-0">
+                            {% if user.tipo_usuario == 'propietario' %}
+                            Inmuebles
+                            {% else %}
+                            Contratos
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h2 class="text-success">{{ user.contratos_inquilino.filter.count|default:0 }}</h2>
+                        <p class="mb-0">Contratos</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h2 class="text-warning">{{ user.notificaciones.filter.count|default:0 }}</h2>
+                        <p class="mb-0">Notificaciones</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actividad Reciente -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-clock"></i> Actividad Reciente</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% if user.tipo_usuario == 'propietario' %}
+                        {% for inmueble in user.inmuebles_propietario.all|slice:":5" %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="mb-1">{{ inmueble.titulo }}</h6>
+                                    <small class="text-muted">Registrado {{ inmueble.fecha_registro|timesince }} atrás</small>
+                                </div>
+                                <span class="badge bg-{{ inmueble.estado|yesno:'success,warning' }}">
+                                    {{ inmueble.get_estado_display }}
+                                </span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted mb-0">No hay actividad reciente</p>
+                        {% endfor %}
+                    {% else %}
+                        {% for contrato in user.contratos_inquilino.all|slice:":5" %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="mb-1">{{ contrato.inmueble.titulo }}</h6>
+                                    <small class="text-muted">Contrato {{ contrato.numero_contrato }}</small>
+                                </div>
+                                <span class="badge bg-{{ contrato.estado|yesno:'success,warning' }}">
+                                    {{ contrato.get_estado_display }}
+                                </span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted mb-0">No hay actividad reciente</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Perfil -->
+<div class="modal fade" id="editarPerfilModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-edit"></i> Editar Perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nombre</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Apellido</label>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        {{ form.email }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Teléfono</label>
+                            {{ form.telefono }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ciudad</label>
+                            {{ form.ciudad }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Dirección</label>
+                        {{ form.direccion }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Fecha de Nacimiento</label>
+                            {{ form.fecha_nacimiento }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Foto de Perfil</label>
+                            {{ form.foto_perfil }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

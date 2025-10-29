@@ -1,0 +1,336 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}InmueblesApp - Gestión de Inmuebles{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .navbar {
+            background-color: var(--primary-color) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #fff;
+            box-shadow: 2px 0 5px rgba(0,0,0,.05);
+            padding: 20px 0;
+        }
+        
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 12px 20px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #f8f9fa;
+            border-left-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+        
+        .sidebar .nav-link i {
+            width: 25px;
+            margin-right: 10px;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,.08);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,.15);
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        
+        .badge-notification {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: var(--danger-color);
+        }
+        
+        .stat-card {
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card h3 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card.primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-card.success { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-card.warning { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .stat-card.info { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body {% if user.is_authenticated %}data-user-id="{{ user.id }}"{% endif %}>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'core:index' %}">
+                <i class="fas fa-building"></i> InmueblesApp
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inmuebles:listar' %}">
+                                <i class="fas fa-home"></i> Inmuebles
+                            </a>
+                        </li>
+                        
+                        {% if user.tipo_usuario == 'propietario' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'inmuebles:mis_inmuebles' %}">
+                                <i class="fas fa-list"></i> Mis Inmuebles
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'contratos:listar' %}">
+                                <i class="fas fa-file-contract"></i> Contratos
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'pagos:listar' %}">
+                                <i class="fas fa-money-bill"></i> Pagos
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'mantenimientos:listar' %}">
+                                <i class="fas fa-tools"></i> Mantenimientos
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item position-relative">
+                            <a class="nav-link" href="{% url 'notificaciones:listar' %}" id="notificaciones-link">
+                                <i class="fas fa-bell"></i>
+                                <span class="badge bg-danger badge-notification d-none" id="notif-count">0</span>
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle"></i> {{ user.get_full_name|default:user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'core:dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{% url 'core:perfil' %}"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'core:logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'core:login' %}">
+                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'core:registro' %}">
+                                <i class="fas fa-user-plus"></i> Registrarse
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <div class="row">
+            {% if user.is_authenticated %}
+            <!-- Sidebar -->
+            <div class="col-md-2 d-none d-md-block sidebar">
+                <nav class="nav flex-column">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'core:dashboard' %}">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    
+                    {% if user.tipo_usuario == 'propietario' %}
+                    <a class="nav-link" href="{% url 'inmuebles:crear' %}">
+                        <i class="fas fa-plus-circle"></i> Nuevo Inmueble
+                    </a>
+                    <a class="nav-link" href="{% url 'contratos:crear' %}">
+                        <i class="fas fa-file-signature"></i> Nuevo Contrato
+                    </a>
+                    <a class="nav-link" href="{% url 'pagos:reportes' %}">
+                        <i class="fas fa-chart-bar"></i> Reportes
+                    </a>
+                    {% else %}
+                    <a class="nav-link" href="{% url 'inmuebles:listar' %}">
+                        <i class="fas fa-search"></i> Buscar Inmuebles
+                    </a>
+                    <a class="nav-link" href="{% url 'mantenimientos:solicitar' %}">
+                        <i class="fas fa-wrench"></i> Solicitar Mantenimiento
+                    </a>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <a class="nav-link" href="{% url 'notificaciones:configuracion' %}">
+                        <i class="fas fa-cog"></i> Configuración
+                    </a>
+                </nav>
+            </div>
+            {% endif %}
+            
+            <!-- Content Area -->
+            <div class="col-md-{{ user.is_authenticated|yesno:'10,12' }}">
+                <div class="p-4">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 InmueblesApp. Sistema de Gestión de Inmuebles.</p>
+            <p class="mb-0 mt-2">
+                <small>Desarrollado con <i class="fas fa-heart text-danger"></i> usando Django & Firebase</small>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase JS SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDAZdA0zqeTPu0puh1V-OyXbgShY4rOQKo",
+            authDomain: "immuebles-piolines.firebaseapp.com",
+            projectId: "immuebles-piolines",
+            storageBucket: "immuebles-piolines.firebasestorage.app",
+            messagingSenderId: "667101651987",
+            appId: "1:667101651987:web:392b433f99aa6e51634be6",
+            measurementId: "G-E38S0EZ9HB"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+        
+        // Make Firebase available globally
+        window.firebaseApp = app;
+        window.firebaseDB = db;
+        window.firebaseAnalytics = analytics;
+        
+        console.log("🔥 Firebase inicializado correctamente");
+    </script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Actualizar contador de notificaciones
+        {% if user.is_authenticated %}
+        function actualizarNotificaciones() {
+            fetch('{% url "notificaciones:api_no_leidas" %}')
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.no_leidas;
+                    const badge = document.getElementById('notif-count');
+                    
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.classList.remove('d-none');
+                    } else {
+                        badge.classList.add('d-none');
+                    }
+                });
+        }
+        
+        // Actualizar cada 30 segundos (fallback si Firebase falla)
+        actualizarNotificaciones();
+        setInterval(actualizarNotificaciones, 30000);
+        {% endif %}
+    </script>
+    
+    <!-- Firebase Real-time Notifications -->
+    {% if user.is_authenticated %}
+    <script type="module" src="{% static 'js/firebase-realtime.js' %}"></script>
+    {% endif %}
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

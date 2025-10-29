@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }} - InmueblesApp{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-file-contract me-2"></i>{{ titulo }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.inmueble.id_for_label }}" class="form-label">
+                                    <i class="fas fa-building"></i> Inmueble *
+                                </label>
+                                {{ form.inmueble }}
+                                {% if form.inmueble.errors %}
+                                <div class="text-danger">{{ form.inmueble.errors }}</div>
+                                {% endif %}
+                                <small class="form-text text-muted">
+                                    Selecciona el inmueble que se va a arrendar
+                                </small>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.inquilino.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user"></i> Inquilino *
+                                </label>
+                                {{ form.inquilino }}
+                                {% if form.inquilino.errors %}
+                                <div class="text-danger">{{ form.inquilino.errors }}</div>
+                                {% endif %}
+                                <small class="form-text text-muted">
+                                    Selecciona el usuario inquilino
+                                </small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.fecha_inicio.id_for_label }}" class="form-label">
+                                    <i class="fas fa-calendar-plus"></i> Fecha Inicio *
+                                </label>
+                                {{ form.fecha_inicio }}
+                                {% if form.fecha_inicio.errors %}
+                                <div class="text-danger">{{ form.fecha_inicio.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.fecha_fin.id_for_label }}" class="form-label">
+                                    <i class="fas fa-calendar-check"></i> Fecha Fin *
+                                </label>
+                                {{ form.fecha_fin }}
+                                {% if form.fecha_fin.errors %}
+                                <div class="text-danger">{{ form.fecha_fin.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.valor_arriendo.id_for_label }}" class="form-label">
+                                    <i class="fas fa-dollar-sign"></i> Valor Arriendo *
+                                </label>
+                                {{ form.valor_arriendo }}
+                                {% if form.valor_arriendo.errors %}
+                                <div class="text-danger">{{ form.valor_arriendo.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.valor_administracion.id_for_label }}" class="form-label">
+                                    <i class="fas fa-dollar-sign"></i> Valor Administración
+                                </label>
+                                {{ form.valor_administracion }}
+                                {% if form.valor_administracion.errors %}
+                                <div class="text-danger">{{ form.valor_administracion.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.dia_pago.id_for_label }}" class="form-label">
+                                    <i class="fas fa-calendar-day"></i> Día de Pago (1-31) *
+                                </label>
+                                {{ form.dia_pago }}
+                                {% if form.dia_pago.errors %}
+                                <div class="text-danger">{{ form.dia_pago.errors }}</div>
+                                {% endif %}
+                                <small class="form-text text-muted">
+                                    Día del mes en que debe realizarse el pago
+                                </small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.deposito_seguridad.id_for_label }}" class="form-label">
+                                    <i class="fas fa-shield-alt"></i> Depósito de Seguridad
+                                </label>
+                                {{ form.deposito_seguridad }}
+                                {% if form.deposito_seguridad.errors %}
+                                <div class="text-danger">{{ form.deposito_seguridad.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.terminos_condiciones.id_for_label }}" class="form-label">
+                                    <i class="fas fa-file-alt"></i> Términos y Condiciones
+                                </label>
+                                {{ form.terminos_condiciones }}
+                                {% if form.terminos_condiciones.errors %}
+                                <div class="text-danger">{{ form.terminos_condiciones.errors }}</div>
+                                {% endif %}
+                                <small class="form-text text-muted">
+                                    Condiciones especiales del contrato
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> 
+                            <strong>Nota:</strong> Una vez creado el contrato, ambas partes (propietario e inquilino) 
+                            deberán firmarlo digitalmente para que se active.
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'contratos:listar' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Crear Contrato
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 0.6rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 0.2rem rgba(39, 174, 96, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.text-danger {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+textarea.form-control {
+    min-height: 120px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set date inputs to type date
+    const dateInputs = document.querySelectorAll('input[id*="fecha"]');
+    dateInputs.forEach(input => {
+        input.type = 'date';
+    });
+
+    // Format currency inputs
+    const currencyInputs = document.querySelectorAll('input[id*="valor"], input[id*="deposito"]');
+    currencyInputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value) {
+                this.value = parseFloat(this.value.replace(/[^0-9.]/g, '')).toFixed(2);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

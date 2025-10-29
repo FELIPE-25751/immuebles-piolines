@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Agregar Imágenes - InmueblesApp{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-images me-2"></i>Agregar Imágenes al Inmueble
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Inmueble:</strong> {{ inmueble.titulo }}
+                    </div>
+
+                    <!-- Formulario para subir imagen -->
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.imagen.id_for_label }}" class="form-label">
+                                <i class="fas fa-image"></i> Seleccionar Imagen *
+                            </label>
+                            {{ form.imagen }}
+                            {% if form.imagen.errors %}
+                            <div class="text-danger">{{ form.imagen.errors }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">
+                                Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.descripcion.id_for_label }}" class="form-label">
+                                <i class="fas fa-align-left"></i> Descripción
+                            </label>
+                            {{ form.descripcion }}
+                            {% if form.descripcion.errors %}
+                            <div class="text-danger">{{ form.descripcion.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.principal }}
+                            <label class="form-check-label" for="{{ form.principal.id_for_label }}">
+                                Establecer como imagen principal
+                            </label>
+                            {% if form.principal.errors %}
+                            <div class="text-danger">{{ form.principal.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload"></i> Subir Imagen
+                        </button>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <!-- Imágenes actuales -->
+                    <h5 class="mb-3">Imágenes Actuales ({{ imagenes.count }})</h5>
+                    
+                    {% if imagenes %}
+                    <div class="row">
+                        {% for imagen in imagenes %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <img src="{{ imagen.imagen.url }}" 
+                                     class="card-img-top" 
+                                     alt="{{ imagen.descripcion }}"
+                                     style="height: 150px; object-fit: cover;">
+                                <div class="card-body p-2">
+                                    {% if imagen.principal %}
+                                    <span class="badge bg-success mb-2">Principal</span>
+                                    {% endif %}
+                                    <p class="card-text small mb-2">{{ imagen.descripcion|default:"Sin descripción" }}</p>
+                                    <a href="{% url 'inmuebles:eliminar_imagen' imagen.id %}" 
+                                       class="btn btn-sm btn-danger w-100"
+                                       onclick="return confirm('¿Eliminar esta imagen?')">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Este inmueble aún no tiene imágenes. ¡Agrega algunas para que se vea mejor!
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'inmuebles:mis_inmuebles' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver a Mis Inmuebles
+                        </a>
+                        <a href="{% url 'inmuebles:detalle' inmueble.id %}" class="btn btn-info">
+                            <i class="fas fa-eye"></i> Ver Inmueble
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

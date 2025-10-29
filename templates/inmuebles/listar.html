@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inmuebles Disponibles - InmueblesApp{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="fas fa-home"></i> Inmuebles Disponibles</h2>
+
+    <!-- Formulario de búsqueda -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    {{ form.categoria }}
+                </div>
+                <div class="col-md-3">
+                    {{ form.ciudad }}
+                </div>
+                <div class="col-md-2">
+                    {{ form.precio_min }}
+                </div>
+                <div class="col-md-2">
+                    {{ form.precio_max }}
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de inmuebles -->
+    {% if inmuebles %}
+    <div class="row">
+        {% for inmueble in inmuebles %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if inmueble.imagen_principal %}
+                <img src="{{ inmueble.imagen_principal.imagen.url }}" class="card-img-top" alt="{{ inmueble.titulo }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="fas fa-building fa-4x text-white"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ inmueble.titulo }}</h5>
+                    <p class="text-muted mb-2">
+                        <i class="fas fa-map-marker-alt"></i> {{ inmueble.ciudad }}
+                    </p>
+                    <p class="text-primary mb-2">
+                        <strong>${{ inmueble.precio_arriendo|floatformat:0 }}</strong>/mes
+                    </p>
+                    <p class="mb-2">
+                        <span class="badge bg-info">{{ inmueble.get_categoria_display }}</span>
+                    </p>
+                    <div class="d-flex justify-content-between mb-3">
+                        <small><i class="fas fa-bed"></i> {{ inmueble.habitaciones }}</small>
+                        <small><i class="fas fa-bath"></i> {{ inmueble.banos }}</small>
+                        <small><i class="fas fa-car"></i> {{ inmueble.parqueaderos }}</small>
+                        <small><i class="fas fa-expand"></i> {{ inmueble.area }}m²</small>
+                    </div>
+                    <a href="{% url 'inmuebles:detalle' inmueble.id %}" class="btn btn-primary w-100">
+                        <i class="fas fa-eye"></i> Ver Detalle
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    {% if inmuebles.has_other_pages %}
+    <nav aria-label="Paginación">
+        <ul class="pagination justify-content-center">
+            {% if inmuebles.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ inmuebles.previous_page_number }}">Anterior</a>
+            </li>
+            {% endif %}
+            
+            {% for num in inmuebles.paginator.page_range %}
+            <li class="page-item {% if inmuebles.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            
+            {% if inmuebles.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ inmuebles.next_page_number }}">Siguiente</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-home fa-5x text-muted mb-3"></i>
+        <h3>No hay inmuebles disponibles</h3>
+        <p class="text-muted">No se encontraron inmuebles con los criterios seleccionados</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

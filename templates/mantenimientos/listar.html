@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mantenimientos - InmueblesApp{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-tools"></i> Solicitudes de Mantenimiento</h2>
+        {% if user.tipo_usuario == 'inquilino' %}
+        <a href="{% url 'mantenimientos:solicitar' %}" class="btn btn-warning">
+            <i class="fas fa-plus"></i> Nueva Solicitud
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Filtros por estado -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link {% if not estado_filtro or estado_filtro == 'todos' %}active{% endif %}" 
+               href="?estado=todos">Todos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if estado_filtro == 'pendiente' %}active{% endif %}" 
+               href="?estado=pendiente">Pendientes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if estado_filtro == 'en_revision' %}active{% endif %}" 
+               href="?estado=en_revision">En Revisión</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if estado_filtro == 'aprobado' %}active{% endif %}" 
+               href="?estado=aprobado">Aprobados</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if estado_filtro == 'en_progreso' %}active{% endif %}" 
+               href="?estado=en_progreso">En Progreso</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if estado_filtro == 'completado' %}active{% endif %}" 
+               href="?estado=completado">Completados</a>
+        </li>
+    </ul>
+
+    {% if mantenimientos %}
+    <div class="row">
+        {% for mantenimiento in mantenimientos %}
+        <div class="col-md-12 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5>
+                                <span class="badge bg-secondary">{{ mantenimiento.numero_ticket }}</span>
+                                {{ mantenimiento.get_tipo_display }}
+                            </h5>
+                            <p class="mb-2">
+                                <i class="fas fa-building"></i> 
+                                <strong>{{ mantenimiento.inmueble.titulo }}</strong>
+                            </p>
+                            <p class="mb-2">
+                                <i class="fas fa-map-marker-alt"></i> {{ mantenimiento.inmueble.direccion }}
+                            </p>
+                            <p class="mb-2">
+                                <strong>Descripción:</strong> {{ mantenimiento.descripcion|truncatewords:20 }}
+                            </p>
+                            <p class="mb-1">
+                                <i class="fas fa-calendar"></i> 
+                                Solicitado: {{ mantenimiento.fecha_solicitud|date:"d/m/Y" }}
+                            </p>
+                            {% if mantenimiento.costo_estimado %}
+                            <p class="mb-0">
+                                <i class="fas fa-dollar-sign"></i> 
+                                Costo estimado: <strong>${{ mantenimiento.costo_estimado|floatformat:0 }}</strong>
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <!-- Estado -->
+                            {% if mantenimiento.estado == 'pendiente' %}
+                            <span class="badge bg-warning fs-6 mb-2">{{ mantenimiento.get_estado_display }}</span>
+                            {% elif mantenimiento.estado == 'en_revision' %}
+                            <span class="badge bg-info fs-6 mb-2">{{ mantenimiento.get_estado_display }}</span>
+                            {% elif mantenimiento.estado == 'aprobado' %}
+                            <span class="badge bg-primary fs-6 mb-2">{{ mantenimiento.get_estado_display }}</span>
+                            {% elif mantenimiento.estado == 'en_progreso' %}
+                            <span class="badge bg-secondary fs-6 mb-2">{{ mantenimiento.get_estado_display }}</span>
+                            {% elif mantenimiento.estado == 'completado' %}
+                            <span class="badge bg-success fs-6 mb-2">{{ mantenimiento.get_estado_display }}</span>
+                            {% elif mantenimiento.estado == 'rechazado' %}
+                            <span class="badge bg-danger fs-6 mb-2">{{ mantenimiento.get_estado_display }}</span>
+                            {% else %}
+                            <span class="badge bg-dark fs-6 mb-2">{{ mantenimiento.get_estado_display }}</span>
+                            {% endif %}
+
+                            <!-- Prioridad -->
+                            <br>
+                            {% if mantenimiento.prioridad == 'urgente' %}
+                            <span class="badge bg-danger">Urgente</span>
+                            {% elif mantenimiento.prioridad == 'alta' %}
+                            <span class="badge bg-warning">Alta</span>
+                            {% elif mantenimiento.prioridad == 'media' %}
+                            <span class="badge bg-info">Media</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Baja</span>
+                            {% endif %}
+
+                            <div class="mt-3">
+                                <a href="{% url 'mantenimientos:detalle' mantenimiento.id %}" 
+                                   class="btn btn-sm btn-primary w-100 mb-2">
+                                    <i class="fas fa-eye"></i> Ver Detalle
+                                </a>
+                                {% if user.tipo_usuario == 'propietario' and mantenimiento.estado == 'pendiente' %}
+                                <a href="{% url 'mantenimientos:gestionar' mantenimiento.id %}" 
+                                   class="btn btn-sm btn-success w-100">
+                                    <i class="fas fa-cog"></i> Gestionar
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    {% if mantenimientos.has_other_pages %}
+    <nav aria-label="Paginación">
+        <ul class="pagination justify-content-center">
+            {% if mantenimientos.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ mantenimientos.previous_page_number }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}">Anterior</a>
+            </li>
+            {% endif %}
+            
+            <li class="page-item active">
+                <span class="page-link">{{ mantenimientos.number }} de {{ mantenimientos.paginator.num_pages }}</span>
+            </li>
+            
+            {% if mantenimientos.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ mantenimientos.next_page_number }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}">Siguiente</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-tools fa-5x text-muted mb-3"></i>
+        <h3>No hay solicitudes de mantenimiento</h3>
+        <p class="text-muted">
+            {% if user.tipo_usuario == 'inquilino' %}
+            Aún no has solicitado ningún mantenimiento
+            {% else %}
+            No hay solicitudes de mantenimiento pendientes
+            {% endif %}
+        </p>
+        {% if user.tipo_usuario == 'inquilino' %}
+        <a href="{% url 'mantenimientos:solicitar' %}" class="btn btn-warning btn-lg">
+            <i class="fas fa-plus"></i> Solicitar Mantenimiento
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

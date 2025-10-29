@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reportes de Pagos - InmueblesApp{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0">
+                <i class="fas fa-chart-bar me-2"></i>Reportes de Pagos
+            </h4>
+        </div>
+        <div class="card-body">
+            <!-- Filtros -->
+            <form method="get" class="mb-4">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="fecha_desde" class="form-label">
+                            <i class="fas fa-calendar"></i> Desde:
+                        </label>
+                        <input type="date" name="fecha_desde" id="fecha_desde" 
+                               class="form-control" value="{{ fecha_desde }}">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="fecha_hasta" class="form-label">
+                            <i class="fas fa-calendar"></i> Hasta:
+                        </label>
+                        <input type="date" name="fecha_hasta" id="fecha_hasta" 
+                               class="form-control" value="{{ fecha_hasta }}">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="estado" class="form-label">
+                            <i class="fas fa-filter"></i> Estado:
+                        </label>
+                        <select name="estado" id="estado" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="pendiente" {% if estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                            <option value="pagado" {% if estado == 'pagado' %}selected{% endif %}>Pagado</option>
+                            <option value="vencido" {% if estado == 'vencido' %}selected{% endif %}>Vencido</option>
+                            <option value="parcial" {% if estado == 'parcial' %}selected{% endif %}>Parcial</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label d-block">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Filtrar
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Resumen -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h5>Total Pagos</h5>
+                            <h2>{{ total_pagos|default:0 }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h5>Total Pagado</h5>
+                            <h2>${{ total_pagado|default:0|floatformat:0 }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark">
+                        <div class="card-body text-center">
+                            <h5>Total Pendiente</h5>
+                            <h2>${{ total_pendiente|default:0|floatformat:0 }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body text-center">
+                            <h5>Total Vencido</h5>
+                            <h2>${{ total_vencido|default:0|floatformat:0 }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de pagos -->
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>N° Pago</th>
+                            <th>Contrato</th>
+                            <th>Inmueble</th>
+                            <th>Inquilino</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Fecha Venc.</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pago in pagos %}
+                        <tr>
+                            <td><strong>{{ pago.numero_pago }}</strong></td>
+                            <td>{{ pago.contrato.numero_contrato }}</td>
+                            <td>{{ pago.contrato.inmueble.titulo }}</td>
+                            <td>{{ pago.contrato.inquilino.get_full_name }}</td>
+                            <td><strong>${{ pago.monto_total|floatformat:0 }}</strong></td>
+                            <td>
+                                {% if pago.estado == 'pagado' %}
+                                <span class="badge bg-success">Pagado</span>
+                                {% elif pago.estado == 'pendiente' %}
+                                <span class="badge bg-warning">Pendiente</span>
+                                {% elif pago.estado == 'vencido' %}
+                                <span class="badge bg-danger">Vencido</span>
+                                {% else %}
+                                <span class="badge bg-info">{{ pago.get_estado_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ pago.fecha_vencimiento|date:"d/m/Y" }}</td>
+                            <td>
+                                <a href="{% url 'pagos:detalle_pago' pago.id %}" 
+                                   class="btn btn-sm btn-primary" title="Ver detalle">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% if pago.cuenta_cobro_generada %}
+                                <a href="{% url 'pagos:generar_cuenta_cobro' pago.id %}" 
+                                   class="btn btn-sm btn-danger" title="Descargar PDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox fa-3x mb-3"></i>
+                                <p>No hay pagos que mostrar con los filtros seleccionados</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Botón para exportar -->
+            <div class="text-end mt-3">
+                <button class="btn btn-success" onclick="window.print()">
+                    <i class="fas fa-print"></i> Imprimir Reporte
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .btn, .card-header, nav, .sidebar {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+</style>
+{% endblock %}

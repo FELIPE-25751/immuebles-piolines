@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="display-5">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+    </h1>
+    <p class="lead">
+        Bienvenido, <strong>{{ usuario.get_full_name }}</strong>
+        <span class="badge bg-primary">{{ usuario.get_tipo_usuario_display }}</span>
+    </p>
+</div>
+
+<!-- Estadísticas -->
+<div class="row mb-4">
+    {% if usuario.tipo_usuario == 'propietario' %}
+    <div class="col-md-3">
+        <div class="stat-card primary">
+            <h3>{{ total_inmuebles }}</h3>
+            <p class="mb-0"><i class="fas fa-home"></i> Total Inmuebles</p>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card success">
+            <h3>{{ contratos_activos }}</h3>
+            <p class="mb-0"><i class="fas fa-file-contract"></i> Contratos Activos</p>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card warning">
+            <h3>{{ pagos_pendientes }}</h3>
+            <p class="mb-0"><i class="fas fa-money-bill"></i> Pagos Pendientes</p>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card info">
+            <h3>{{ mantenimientos_activos }}</h3>
+            <p class="mb-0"><i class="fas fa-tools"></i> Mantenimientos</p>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-md-4">
+        <div class="stat-card primary">
+            <h3>{{ contratos_activos }}</h3>
+            <p class="mb-0"><i class="fas fa-file-contract"></i> Contratos Activos</p>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="stat-card warning">
+            <h3>{{ pagos_pendientes }}</h3>
+            <p class="mb-0"><i class="fas fa-money-bill"></i> Pagos Pendientes</p>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="stat-card info">
+            <h3>{{ mantenimientos_activos }}</h3>
+            <p class="mb-0"><i class="fas fa-tools"></i> Solicitudes Activas</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    <!-- Columna Izquierda -->
+    <div class="col-md-8">
+        {% if usuario.tipo_usuario == 'propietario' %}
+        <!-- Inmuebles Recientes -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-home"></i> Inmuebles Recientes</h5>
+            </div>
+            <div class="card-body">
+                {% if inmuebles_recientes %}
+                <div class="list-group list-group-flush">
+                    {% for inmueble in inmuebles_recientes %}
+                    <a href="{% url 'inmuebles:detalle' inmueble.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ inmueble.titulo }}</h6>
+                                <small class="text-muted">{{ inmueble.direccion }}</small>
+                            </div>
+                            <span class="badge bg-{{ inmueble.estado|yesno:'success,warning' }}">
+                                {{ inmueble.get_estado_display }}
+                            </span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No hay inmuebles registrados</p>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <!-- Inmuebles Actuales -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-home"></i> Mis Inmuebles Arrendados</h5>
+            </div>
+            <div class="card-body">
+                {% if inmuebles_actuales %}
+                <div class="list-group list-group-flush">
+                    {% for inmueble in inmuebles_actuales %}
+                    <a href="{% url 'inmuebles:detalle' inmueble.id %}" class="list-group-item list-group-item-action">
+                        <h6 class="mb-1">{{ inmueble.titulo }}</h6>
+                        <small class="text-muted">{{ inmueble.direccion }}</small>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No tienes inmuebles arrendados actualmente</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Últimos Pagos -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-money-bill"></i> Últimos Pagos</h5>
+            </div>
+            <div class="card-body">
+                {% if ultimos_pagos %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Concepto</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pago in ultimos_pagos %}
+                            <tr>
+                                <td><a href="{% url 'pagos:detalle' pago.id %}">{{ pago.numero_pago }}</a></td>
+                                <td>{{ pago.concepto }}</td>
+                                <td>${{ pago.monto|floatformat:0 }}</td>
+                                <td><span class="badge bg-{{ pago.estado|yesno:'success,warning' }}">{{ pago.get_estado_display }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No hay pagos registrados</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Columna Derecha -->
+    <div class="col-md-4">
+        <!-- Notificaciones -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-bell"></i> Notificaciones</h5>
+            </div>
+            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                {% if notificaciones %}
+                <div class="list-group list-group-flush">
+                    {% for notif in notificaciones %}
+                    <a href="{% url 'notificaciones:marcar_leida' notif.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="mb-1">{{ notif.titulo }}</h6>
+                            <small>{{ notif.fecha_creacion|timesince }}</small>
+                        </div>
+                        <p class="mb-0 small text-muted">{{ notif.mensaje|truncatewords:15 }}</p>
+                    </a>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'notificaciones:listar' %}" class="btn btn-sm btn-outline-primary">
+                        Ver todas
+                    </a>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No hay notificaciones nuevas</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Accesos Rápidos -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-bolt"></i> Accesos Rápidos</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    {% if usuario.tipo_usuario == 'propietario' %}
+                    <a href="{% url 'inmuebles:crear' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nuevo Inmueble
+                    </a>
+                    <a href="{% url 'contratos:crear' %}" class="btn btn-success">
+                        <i class="fas fa-file-signature"></i> Nuevo Contrato
+                    </a>
+                    <a href="{% url 'pagos:reportes' %}" class="btn btn-warning">
+                        <i class="fas fa-chart-bar"></i> Ver Reportes
+                    </a>
+                    {% else %}
+                    <a href="{% url 'inmuebles:listar' %}" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Buscar Inmuebles
+                    </a>
+                    <a href="{% url 'mantenimientos:solicitar' %}" class="btn btn-warning">
+                        <i class="fas fa-wrench"></i> Solicitar Mantenimiento
+                    </a>
+                    <a href="{% url 'pagos:listar' %}" class="btn btn-success">
+                        <i class="fas fa-money-bill"></i> Mis Pagos
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
