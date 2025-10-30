@@ -10,9 +10,8 @@ cmds = ["pip install --upgrade pip", "pip install -r requirements.txt"]
 [phases.build]
 cmds = [
     "mkdir -p staticfiles",
-    "python manage.py collectstatic --noinput --clear",
-    "python manage.py migrate --noinput"
+    "chmod +x start.sh"
 ]
 
 [start]
-cmd = "gunicorn inmueblesapp.wsgi:application --bind 0.0.0.0:${PORT:-8000}"
+cmd = "./start.sh"
