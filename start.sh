@@ -1,6 +1,8 @@
 #!/bin/bash
 # Script de inicio para Railway - Ejecuta migraciones y luego inicia el servidor
 
+set -e
+
 echo "Ejecutando migraciones..."
 python manage.py migrate --noinput
 
