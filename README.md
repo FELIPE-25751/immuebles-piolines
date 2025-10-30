@@ -1,3 +1,4 @@
+# Forzar redeploy Railway para aplicar migraciones de SolicitudArriendo
 # InmueblesApp - Sistema de Gestión de Inmuebles
 
 ## 📋 Descripción
