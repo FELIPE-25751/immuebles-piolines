@@ -46,6 +46,38 @@
                     <a href="{% url 'pagos:listar' %}" class="btn btn-outline-secondary mt-3">
                         <i class="fas fa-arrow-left"></i> Volver a Pagos
                     </a>
+
+                    {% if user.tipo_usuario == 'propietario' %}
+                        <div class="d-flex gap-2 mt-3">
+                            {% if pago.estado == 'pendiente' %}
+                                <form method="post" action="{% url 'pagos:marcar_pagado' pago.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-check"></i> Marcar como Pagado
+                                    </button>
+                                </form>
+                                <form method="post" action="{% url 'pagos:marcar_vencido' pago.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-times-circle"></i> Marcar como Vencido
+                                    </button>
+                                </form>
+                            {% elif pago.estado == 'vencido' %}
+                                <form method="post" action="{% url 'pagos:marcar_pagado' pago.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-check"></i> Marcar como Pagado
+                                    </button>
+                                </form>
+                            {% elif pago.estado == 'pagado' %}
+                                <span class="badge bg-success align-self-center">Pago Confirmado</span>
+                            {% endif %}
+                        </div>
+                    {% elif user.tipo_usuario == 'inquilino' and pago.estado in 'pendiente,vencido' %}
+                        <a href="{% url 'pagos:registrar' pago.id %}" class="btn btn-success mt-3">
+                            <i class="fas fa-money-bill-wave"></i> Registrar Pago
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
