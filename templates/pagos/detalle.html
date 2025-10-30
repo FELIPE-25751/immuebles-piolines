@@ -49,29 +49,27 @@
 
                     {% if user.tipo_usuario == 'propietario' %}
                         <div class="d-flex gap-2 mt-3">
-                            {% if pago.estado == 'pendiente' %}
-                                <form method="post" action="{% url 'pagos:marcar_pagado' pago.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="fas fa-check"></i> Marcar como Pagado
-                                    </button>
-                                </form>
-                                <form method="post" action="{% url 'pagos:marcar_vencido' pago.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="fas fa-times-circle"></i> Marcar como Vencido
-                                    </button>
-                                </form>
-                            {% elif pago.estado == 'vencido' %}
-                                <form method="post" action="{% url 'pagos:marcar_pagado' pago.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="fas fa-check"></i> Marcar como Pagado
-                                    </button>
-                                </form>
-                            {% elif pago.estado == 'pagado' %}
-                                <span class="badge bg-success align-self-center">Pago Confirmado</span>
-                            {% endif %}
+                            <form method="post" action="{% url 'pagos:cambiar_estado' pago.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="nuevo_estado" value="pendiente">
+                                <button type="submit" class="btn btn-secondary" {% if pago.estado == 'pendiente' %}disabled{% endif %}>
+                                    <i class="fas fa-undo"></i> Marcar como Pendiente
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'pagos:cambiar_estado' pago.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="nuevo_estado" value="pagado">
+                                <button type="submit" class="btn btn-success" {% if pago.estado == 'pagado' %}disabled{% endif %}>
+                                    <i class="fas fa-check"></i> Marcar como Pagado
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'pagos:cambiar_estado' pago.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="nuevo_estado" value="vencido">
+                                <button type="submit" class="btn btn-danger" {% if pago.estado == 'vencido' %}disabled{% endif %}>
+                                    <i class="fas fa-times-circle"></i> Marcar como Vencido
+                                </button>
+                            </form>
                         </div>
                     {% elif user.tipo_usuario == 'inquilino' and (pago.estado == 'pendiente' or pago.estado == 'vencido') %}
                         <a href="{% url 'pagos:registrar' pago.id %}" class="btn btn-success mt-3">

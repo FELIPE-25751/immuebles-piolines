@@ -1,3 +1,4 @@
+    path('cambiar-estado/<int:pago_id>/', views.cambiar_estado_pago, name='cambiar_estado'),
 from django.urls import path
 from . import views
 

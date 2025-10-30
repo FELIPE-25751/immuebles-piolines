@@ -1,3 +1,24 @@
+@login_required
+def cambiar_estado_pago(request, pago_id):
+    """Permite al propietario cambiar el estado de un pago manualmente."""
+    pago = get_object_or_404(Pago, id=pago_id)
+    if pago.contrato.inmueble.propietario != request.user:
+        messages.error(request, 'No tienes permiso para cambiar el estado de este pago.')
+        return redirect('pagos:detalle', pago_id=pago.id)
+    if request.method == 'POST':
+        nuevo_estado = request.POST.get('nuevo_estado')
+        if nuevo_estado in ['pendiente', 'pagado', 'vencido']:
+            pago.estado = nuevo_estado
+            if nuevo_estado == 'pagado':
+                pago.fecha_pago = timezone.now().date()
+            elif nuevo_estado == 'pendiente':
+                pago.fecha_pago = None
+            pago.save()
+            pago.save_to_firebase()
+            messages.success(request, f'El estado del pago fue actualizado a {nuevo_estado}.')
+        else:
+            messages.error(request, 'Estado no válido.')
+    return redirect('pagos:detalle', pago_id=pago.id)
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
