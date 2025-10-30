@@ -5,8 +5,13 @@ set -e
 
 # Forzar redeploy Railway - commit de prueba
 
-echo "Ejecutando migraciones..."
-python manage.py migrate --noinput
+# Esperar y reintentar migraciones hasta que la base de datos esté lista
+for i in {1..10}; do
+  echo "Intentando aplicar migraciones (intento $i)..."
+  python manage.py migrate --noinput && break
+  echo "La base de datos no está lista, reintentando en 5 segundos..."
+  sleep 5
+done
 
 echo "Recolectando archivos estáticos..."
 python manage.py collectstatic --noinput --clear
