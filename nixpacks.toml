@@ -15,3 +15,5 @@ cmds = [
 
 [start]
 cmd = "./start.sh"
+
+# Forzar rebuild limpio para Railway - Python 3.11
