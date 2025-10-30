@@ -8,7 +8,10 @@ nixPkgs = ["python311", "postgresql"]
 cmds = ["pip install --upgrade pip", "pip install -r requirements.txt"]
 
 [phases.build]
-cmds = ["python manage.py collectstatic --noinput"]
+cmds = [
+    "mkdir -p staticfiles",
+    "python manage.py collectstatic --noinput --clear"
+]
 
 [start]
 cmd = "gunicorn inmueblesapp.wsgi:application --bind 0.0.0.0:${PORT:-8000}"
