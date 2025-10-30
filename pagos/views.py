@@ -68,9 +68,21 @@ def listar_pagos(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
+    # Totales para el resumen (solo para inquilino)
+    total_pendiente = total_vencido = total_pagado = 0
+    if user.tipo_usuario == 'inquilino':
+        pagos_all = Pago.objects.filter(contrato__inquilino=user)
+        total_pendiente = pagos_all.filter(estado='pendiente').aggregate(total=models.Sum('monto') - models.Sum('monto_pagado'))['total'] or 0
+        total_vencido = pagos_all.filter(estado='vencido').aggregate(total=models.Sum('monto') - models.Sum('monto_pagado'))['total'] or 0
+        total_pagado = pagos_all.filter(estado='pagado').aggregate(total=models.Sum('monto_pagado'))['total'] or 0
+
     context = {
         'pagos': page_obj,
         'form': form,
+        'total_pendiente': total_pendiente,
+        'total_vencido': total_vencido,
+        'total_pagado': total_pagado,
+        'estado_filtro': request.GET.get('estado', 'todos'),
     }
     return render(request, 'pagos/listar.html', context)
 
