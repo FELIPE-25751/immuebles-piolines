@@ -36,6 +36,20 @@
                             {% if es_propietario %}Propietario{% else %}Inquilino{% endif %}
                         </span></h6>
                     </div>
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
                     <form method="post">
                         {% csrf_token %}
                         <input type="hidden" name="firma" id="firma-input">
@@ -43,6 +57,12 @@
                             <label class="form-label">Dibuja tu firma digital:</label>
                             <canvas id="firma-canvas" width="400" height="120" style="border:1px solid #ccc; border-radius:8px;"></canvas>
                             <button type="button" class="btn btn-secondary btn-sm mt-2" id="limpiar-firma">Limpiar</button>
+                        </div>
+                        <div class="form-check mb-3">
+                            {{ form.acepto_terminos }}
+                            <label class="form-check-label" for="id_acepto_terminos">
+                                Acepto los <a href="#" target="_blank">términos y condiciones del contrato</a>
+                            </label>
                         </div>
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-success btn-lg">
