@@ -124,8 +124,11 @@ def editar_contrato(request, contrato_id):
     if request.method == 'POST':
         form = ContratoForm(request.POST, instance=contrato, propietario=request.user)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Contrato actualizado exitosamente.')
+            contrato = form.save(commit=False)
+            if contrato.estado == 'borrador':
+                contrato.estado = 'pendiente_firma'
+            contrato.save()
+            messages.success(request, 'Contrato actualizado y listo para firma.')
             return redirect('contratos:detalle', contrato_id=contrato.id)
     else:
         form = ContratoForm(instance=contrato, propietario=request.user)
