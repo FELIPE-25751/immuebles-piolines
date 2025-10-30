@@ -3,6 +3,8 @@
 
 set -e
 
+# Forzar redeploy Railway - commit de prueba
+
 echo "Ejecutando migraciones..."
 python manage.py migrate --noinput
 
