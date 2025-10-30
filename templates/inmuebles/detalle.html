@@ -34,6 +34,14 @@
                             <p><strong>Descripción:</strong> {{ inmueble.descripcion }}</p>
                         </div>
                     </div>
+                    {% if user.is_authenticated and user.tipo_usuario == 'inquilino' and inmueble.estado == 'disponible' %}
+                        <form method="post" action="{% url 'contratos:solicitar_inmueble' inmueble.id %}" class="mb-3">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-handshake"></i> Solicitar este inmueble
+                            </button>
+                        </form>
+                    {% endif %}
                     <hr>
                     <h5>Imágenes adicionales</h5>
                     <div class="row">

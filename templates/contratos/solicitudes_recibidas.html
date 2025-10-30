@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Solicitudes Recibidas - InmueblesApp{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-4">Solicitudes de Arriendo Recibidas</h3>
+    {% if solicitudes %}
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Inmueble</th>
+                <th>Inquilino</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for s in solicitudes %}
+            <tr>
+                <td>{{ s.inmueble.titulo }}</td>
+                <td>{{ s.inquilino.get_full_name }}</td>
+                <td>{{ s.fecha_solicitud|date:'d/m/Y H:i' }}</td>
+                <td>
+                    {% if s.estado == 'pendiente' %}
+                        <span class="badge bg-warning text-dark">Pendiente</span>
+                    {% elif s.estado == 'aceptada' %}
+                        <span class="badge bg-success">Aceptada</span>
+                    {% elif s.estado == 'rechazada' %}
+                        <span class="badge bg-danger">Rechazada</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ s.estado }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if s.estado == 'pendiente' %}
+                    <a href="{% url 'contratos:responder_solicitud' s.id 'aceptar' %}" class="btn btn-success btn-sm me-2" onclick="return confirm('¿Aceptar esta solicitud?')">Aceptar</a>
+                    <a href="{% url 'contratos:responder_solicitud' s.id 'rechazar' %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Rechazar esta solicitud?')">Rechazar</a>
+                    {% else %}
+                    <span class="text-muted">Sin acciones</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">No tienes solicitudes de arriendo pendientes.</div>
+    {% endif %}
+</div>
+{% endblock %}
