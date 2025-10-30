@@ -133,6 +133,90 @@ def registrar_pago(request, pago_id):
 
 
 @login_required
+def marcar_pagado(request, pago_id):
+    """Permite al propietario marcar un pago como pagado (registro automático)."""
+    pago = get_object_or_404(Pago, id=pago_id)
+
+    # Solo el propietario del inmueble puede usar esta acción
+    if pago.contrato.inmueble.propietario != request.user:
+        messages.error(request, 'No tienes permiso para cambiar el estado de este pago.')
+        return redirect('pagos:detalle', pago_id=pago.id)
+
+    if request.method != 'POST':
+        return redirect('pagos:detalle', pago_id=pago.id)
+
+    # Si ya está pagado, no hacer nada
+    if pago.estado == 'pagado':
+        messages.info(request, 'Este pago ya está marcado como pagado.')
+        return redirect('pagos:detalle', pago_id=pago.id)
+
+    # Registrar un registro de pago automático con el saldo pendiente
+    saldo = pago.get_saldo_pendiente()
+    if saldo > 0:
+        registro = RegistroPago.objects.create(
+            pago=pago,
+            monto=saldo,
+            metodo_pago='otro',
+            referencia='Marcado como pagado por el propietario',
+            registrado_por=request.user
+        )
+        pago.monto_pagado += registro.monto
+
+    # Establecer fecha de pago si no existe
+    if not pago.fecha_pago:
+        pago.fecha_pago = timezone.now().date()
+
+    pago.save()
+    pago.save_to_firebase()
+
+    # Notificar al inquilino
+    Notificacion.objects.create(
+        usuario=pago.contrato.inquilino,
+        titulo='Pago confirmado por el propietario',
+        mensaje=f'El propietario ha marcado como pagado el pago {pago.numero_pago}.',
+        tipo='pago',
+        enlace=f'/pagos/{pago.id}/'
+    )
+
+    messages.success(request, 'Pago marcado como pagado correctamente.')
+    return redirect('pagos:detalle', pago_id=pago.id)
+
+
+@login_required
+def marcar_vencido(request, pago_id):
+    """Permite al propietario marcar un pago como vencido manualmente."""
+    pago = get_object_or_404(Pago, id=pago_id)
+
+    # Solo el propietario del inmueble puede usar esta acción
+    if pago.contrato.inmueble.propietario != request.user:
+        messages.error(request, 'No tienes permiso para cambiar el estado de este pago.')
+        return redirect('pagos:detalle', pago_id=pago.id)
+
+    if request.method != 'POST':
+        return redirect('pagos:detalle', pago_id=pago.id)
+
+    if pago.estado == 'vencido':
+        messages.info(request, 'Este pago ya está marcado como vencido.')
+        return redirect('pagos:detalle', pago_id=pago.id)
+
+    pago.estado = 'vencido'
+    pago.calcular_mora()
+    pago.save()
+    pago.save_to_firebase()
+
+    Notificacion.objects.create(
+        usuario=pago.contrato.inquilino,
+        titulo='Pago marcado como vencido',
+        mensaje=f'El propietario ha marcado como vencido el pago {pago.numero_pago}.',
+        tipo='pago',
+        enlace=f'/pagos/{pago.id}/'
+    )
+
+    messages.success(request, 'Pago marcado como vencido.')
+    return redirect('pagos:detalle', pago_id=pago.id)
+
+
+@login_required
 def generar_cuenta_cobro(request, pago_id):
     """Genera una cuenta de cobro en PDF"""
     pago = get_object_or_404(Pago, id=pago_id)
