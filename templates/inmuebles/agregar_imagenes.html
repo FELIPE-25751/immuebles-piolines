@@ -80,11 +80,12 @@
                                     <span class="badge bg-success mb-2">Principal</span>
                                     {% endif %}
                                     <p class="card-text small mb-2">{{ imagen.descripcion|default:"Sin descripción" }}</p>
-                                    <a href="{% url 'inmuebles:eliminar_imagen' imagen.id %}" 
-                                       class="btn btn-sm btn-danger w-100"
-                                       onclick="return confirm('¿Eliminar esta imagen?')">
-                                        <i class="fas fa-trash"></i> Eliminar
-                                    </a>
+                                    <form method="post" action="{% url 'inmuebles:eliminar_imagen' imagen.id %}" style="margin-bottom:0;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-danger w-100" onclick="return confirm('¿Eliminar esta imagen?')">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
