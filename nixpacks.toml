@@ -1,4 +1,4 @@
-[providers]
+[languages]
 python = "3.11"
 
 [phases.setup]
