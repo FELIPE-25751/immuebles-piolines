@@ -321,19 +321,31 @@ def generar_cuenta_cobro(request, pago_id):
     # Información del propietario e inquilino
     propietario = pago.contrato.inmueble.propietario
     inquilino = pago.contrato.inquilino
-    
+
     partes_info = Paragraph(f"""
         <b>Beneficiario:</b> {propietario.get_full_name()}<br/>
         <b>Cédula:</b> {propietario.cedula}<br/>
         <b>Teléfono:</b> {propietario.telefono}<br/>
+        <b>Ciudad:</b> {propietario.ciudad or '-'}<br/>
+        <b>Cuenta Bancaria:</b> 1234567890<br/>
+        <b>Banco:</b> Bancolombia<br/>
+        <b>Tipo de Cuenta:</b> Ahorros<br/>
+        <b>Referencia de pago:</b> {pago.numero_pago}<br/>
         <br/>
         <b>Pagador:</b> {inquilino.get_full_name()}<br/>
         <b>Cédula:</b> {inquilino.cedula}<br/>
         <b>Inmueble:</b> {pago.contrato.inmueble.titulo}<br/>
         <b>Dirección:</b> {pago.contrato.inmueble.direccion}
     """, styles['Normal'])
-    
     elements.append(partes_info)
+
+    instrucciones = Paragraph("""
+        <b>Instrucciones de pago:</b><br/>
+        Realice el pago a la cuenta bancaria indicada. Una vez realizado el pago, registre el comprobante en la plataforma para que el propietario pueda validar y confirmar el abono.<br/>
+        <b>Importante:</b> Use la referencia de pago indicada para facilitar la conciliación.
+    """, styles['Normal'])
+    elements.append(Spacer(1, 0.3*inch))
+    elements.append(instrucciones)
     
     # Generar PDF
     doc.build(elements)
