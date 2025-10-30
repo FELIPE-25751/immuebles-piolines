@@ -135,6 +135,16 @@
                             </div>
 
                             <div class="col-md-4 mb-3">
+                                <label for="{{ form.deposito_seguridad.id_for_label }}" class="form-label">
+                                    <i class="fas fa-lock"></i> Depósito seguridad *
+                                </label>
+                                {{ form.deposito_seguridad }}
+                                {% if form.deposito_seguridad.errors %}
+                                <div class="text-danger">{{ form.deposito_seguridad.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4 mb-3">
                                 <label for="{{ form.habitaciones.id_for_label }}" class="form-label">
                                     <i class="fas fa-bed"></i> Habitaciones *
                                 </label>
