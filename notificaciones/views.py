@@ -43,10 +43,15 @@ def marcar_como_leida(request, notificacion_id):
     notificacion = get_object_or_404(Notificacion, id=notificacion_id, usuario=request.user)
     notificacion.marcar_como_leida()
     
-    # Si hay un enlace, redirigir allí
+    # Si hay un enlace, redirigir allí (absoluto o relativo)
     if notificacion.enlace:
-        return redirect(notificacion.enlace)
-    
+        enlace = notificacion.enlace.strip()
+        if enlace.startswith('http'):
+            return redirect(enlace)
+        try:
+            return redirect(enlace)
+        except Exception:
+            pass
     return redirect('notificaciones:listar')
 
 
