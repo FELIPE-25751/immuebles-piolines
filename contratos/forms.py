@@ -40,6 +40,22 @@ class ContratoForm(forms.ModelForm):
         
         # Filtrar solo usuarios tipo inquilino
         self.fields['inquilino'].queryset = Usuario.objects.filter(tipo_usuario='inquilino')
+        
+        # Si es creación (no edición), y hay datos iniciales o POST, setear valor_deposito según el inmueble
+        if not self.instance.pk:
+            inmueble_id = None
+            # Si es POST, buscar el inmueble seleccionado
+            if self.data.get('inmueble'):
+                inmueble_id = self.data.get('inmueble')
+            # Si es GET (inicial), buscar en initial
+            elif self.initial.get('inmueble'):
+                inmueble_id = self.initial.get('inmueble')
+            if inmueble_id:
+                try:
+                    inmueble = Inmueble.objects.get(pk=inmueble_id)
+                    self.fields['valor_deposito'].initial = inmueble.deposito_seguridad
+                except Inmueble.DoesNotExist:
+                    pass
 
 
 class FirmaContratoForm(forms.Form):
