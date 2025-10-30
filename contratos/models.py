@@ -1,5 +1,6 @@
 from django.db import models
 from core.models import Usuario
+from .models_solicitud import SolicitudArriendo
 from inmuebles.models import Inmueble
 from django.utils import timezone
 from datetime import timedelta
