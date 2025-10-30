@@ -85,13 +85,32 @@ WSGI_APPLICATION = 'inmueblesapp.wsgi.application'
 
 import dj_database_url
 
-# Usar PostgreSQL en producción (Render) o SQLite en desarrollo
+# Detectar PostgreSQL de Railway o DATABASE_URL genérico
 DATABASE_URL = config('DATABASE_URL', default=None)
 
+# Railway proporciona estas variables automáticamente cuando conectas PostgreSQL
+PGHOST = config('PGHOST', default=None)
+PGPORT = config('PGPORT', default=None)
+PGDATABASE = config('PGDATABASE', default=None)
+PGUSER = config('PGUSER', default=None)
+PGPASSWORD = config('PGPASSWORD', default=None)
+
 if DATABASE_URL:
-    # Producción con PostgreSQL
+    # Producción con DATABASE_URL (Render, Heroku, etc.)
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL)
+    }
+elif PGHOST and PGDATABASE:
+    # Railway PostgreSQL
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': PGDATABASE,
+            'USER': PGUSER,
+            'PASSWORD': PGPASSWORD,
+            'HOST': PGHOST,
+            'PORT': PGPORT or 5432,
+        }
     }
 else:
     # Desarrollo con SQLite
