@@ -1,3 +1,19 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.paginator import Paginator
+from django.utils import timezone
+from django.http import HttpResponse
+from .models import Pago, RegistroPago
+from .forms import RegistrarPagoForm, FiltrarPagosForm
+from notificaciones.models import Notificacion
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.units import inch
+import io
+
 @login_required
 def cambiar_estado_pago(request, pago_id):
     """Permite al propietario cambiar el estado de un pago manualmente."""
@@ -19,22 +35,6 @@ def cambiar_estado_pago(request, pago_id):
         else:
             messages.error(request, 'Estado no válido.')
     return redirect('pagos:detalle', pago_id=pago.id)
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.core.paginator import Paginator
-from django.utils import timezone
-from django.http import HttpResponse
-from .models import Pago, RegistroPago
-from .forms import RegistrarPagoForm, FiltrarPagosForm
-from notificaciones.models import Notificacion
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-from reportlab.lib.units import inch
-import io
-
 
 @login_required
 def listar_pagos(request):
