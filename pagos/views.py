@@ -32,6 +32,20 @@ def cambiar_estado_pago(request, pago_id):
                 pago.fecha_pago = None
             pago.save()
             pago.save_to_firebase()
+            # Notificación al inquilino
+            if nuevo_estado == 'pagado':
+                mensaje = f'El propietario ha marcado tu pago {pago.numero_pago} como PAGADO.'
+            elif nuevo_estado == 'vencido':
+                mensaje = f'El propietario ha marcado tu pago {pago.numero_pago} como VENCIDO.'
+            else:
+                mensaje = f'El propietario ha marcado tu pago {pago.numero_pago} como PENDIENTE.'
+            Notificacion.objects.create(
+                usuario=pago.contrato.inquilino,
+                titulo='Estado de pago actualizado',
+                mensaje=mensaje,
+                tipo='pago',
+                enlace=f'/pagos/{pago.id}/'
+            )
             messages.success(request, f'El estado del pago fue actualizado a {nuevo_estado}.')
         else:
             messages.error(request, 'Estado no válido.')
