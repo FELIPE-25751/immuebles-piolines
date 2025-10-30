@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.http import HttpResponse
+from django.db import models
 from .models import Pago, RegistroPago
 from .forms import RegistrarPagoForm, FiltrarPagosForm
 from notificaciones.models import Notificacion
