@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Detalle de Pago - InmueblesPiolines{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'pagos:listar' %}">Pagos</a></li>
+            <li class="breadcrumb-item active">Detalle de Pago</li>
+        </ol>
+    </nav>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-receipt me-2"></i> Detalle del Pago</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-3">{{ pago }}</h5>
+                    <p><strong>Contrato:</strong> {{ pago.contrato.numero_contrato }}</p>
+                    <p><strong>Inmueble:</strong> {{ pago.contrato.inmueble.titulo }}</p>
+                    <p><strong>Período:</strong> {{ pago.periodo_inicio|date:'d/m/Y' }} - {{ pago.periodo_fin|date:'d/m/Y' }}</p>
+                    <p><strong>Vence:</strong> {{ pago.fecha_vencimiento|date:'d/m/Y' }}</p>
+                    <p><strong>Monto Total:</strong> ${{ pago.monto_total|floatformat:0 }}</p>
+                    <p><strong>Estado:</strong> 
+                        {% if pago.estado == 'pendiente' %}
+                            <span class="badge bg-warning text-dark">Pendiente</span>
+                        {% elif pago.estado == 'pagado' %}
+                            <span class="badge bg-success">Pagado</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ pago.get_estado_display }}</span>
+                        {% endif %}
+                    </p>
+                    <hr>
+                    <h6>Registros de Pago</h6>
+                    {% if registros %}
+                        <ul class="list-group mb-3">
+                            {% for reg in registros %}
+                                <li class="list-group-item">
+                                    {{ reg.fecha|date:'d/m/Y H:i' }} - ${{ reg.monto|floatformat:0 }} - {{ reg.get_metodo_display }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="alert alert-info">No hay registros de pago aún.</div>
+                    {% endif %}
+                    <a href="{% url 'pagos:listar' %}" class="btn btn-outline-secondary mt-3">
+                        <i class="fas fa-arrow-left"></i> Volver a Pagos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
