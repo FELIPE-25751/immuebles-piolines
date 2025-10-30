@@ -5,6 +5,11 @@ set -e
 
 # Forzar redeploy Railway - commit de prueba
 
+
+# Ejecutar makemigrations antes de migrar
+echo "Generando nuevas migraciones..."
+python manage.py makemigrations --noinput
+
 # Esperar y reintentar migraciones hasta que la base de datos esté lista
 for i in {1..10}; do
   echo "Intentando aplicar migraciones (intento $i)..."
