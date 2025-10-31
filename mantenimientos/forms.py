@@ -4,6 +4,13 @@ from inmuebles.models import Inmueble
 
 
 class MantenimientoForm(forms.ModelForm):
+    def clean_imagen(self):
+        imagen = self.cleaned_data.get('imagen')
+        if imagen:
+            valid_types = ['image/jpeg', 'image/png']
+            if hasattr(imagen, 'content_type') and imagen.content_type not in valid_types:
+                raise forms.ValidationError('Solo se permiten imágenes en formato JPG o PNG.')
+        return imagen
     """Formulario para solicitar mantenimiento"""
     
     class Meta:
