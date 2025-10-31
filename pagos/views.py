@@ -1,3 +1,28 @@
+from django import forms
+
+class CuentaCobroForm(forms.Form):
+    cuenta_bancaria = forms.CharField(label='Cuenta Bancaria', max_length=30)
+    banco = forms.CharField(label='Banco', max_length=50)
+    tipo_cuenta = forms.CharField(label='Tipo de Cuenta', max_length=30)
+
+@login_required
+def editar_cuenta_cobro(request, pago_id):
+    pago = get_object_or_404(Pago, id=pago_id)
+    if request.user.tipo_usuario != 'propietario' or pago.contrato.inmueble.propietario != request.user:
+        messages.error(request, 'No tienes permiso para editar esta cuenta de cobro.')
+        return redirect('pagos:detalle', pago_id=pago.id)
+    initial = {
+        'cuenta_bancaria': getattr(request.user, 'cuenta_bancaria', '1234567890'),
+        'banco': getattr(request.user, 'banco', 'Bancolombia'),
+        'tipo_cuenta': getattr(request.user, 'tipo_cuenta', 'Ahorros'),
+    }
+    if request.method == 'POST':
+        form = CuentaCobroForm(request.POST)
+        if form.is_valid():
+            return generar_cuenta_cobro(request, pago_id, datos=form.cleaned_data)
+    else:
+        form = CuentaCobroForm(initial=initial)
+    return render(request, 'pagos/editar_cuenta_cobro.html', {'form': form, 'pago': pago})
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -265,10 +290,9 @@ def marcar_vencido(request, pago_id):
 
 
 @login_required
-def generar_cuenta_cobro(request, pago_id):
+def generar_cuenta_cobro(request, pago_id, datos=None):
     """Genera una cuenta de cobro en PDF"""
     pago = get_object_or_404(Pago, id=pago_id)
-    
     # Verificar permisos
     if request.user.tipo_usuario == 'propietario':
         if pago.contrato.inmueble.propietario != request.user:
@@ -278,18 +302,32 @@ def generar_cuenta_cobro(request, pago_id):
         if pago.contrato.inquilino != request.user:
             messages.error(request, 'No tienes permiso para ver esta cuenta de cobro.')
             return redirect('pagos:listar')
-    
+
+    # Si es propietario y no hay datos, redirigir a editar
+    if request.user.tipo_usuario == 'propietario' and datos is None:
+        return redirect('pagos:editar_cuenta_cobro', pago_id=pago.id)
+
+    # Usar datos editados o por defecto
+    if datos is None:
+        cuenta_bancaria = getattr(pago.contrato.inmueble.propietario, 'cuenta_bancaria', '1234567890')
+        banco = getattr(pago.contrato.inmueble.propietario, 'banco', 'Bancolombia')
+        tipo_cuenta = getattr(pago.contrato.inmueble.propietario, 'tipo_cuenta', 'Ahorros')
+    else:
+        cuenta_bancaria = datos.get('cuenta_bancaria', '1234567890')
+        banco = datos.get('banco', 'Bancolombia')
+        tipo_cuenta = datos.get('tipo_cuenta', 'Ahorros')
+
     # Crear el PDF en memoria
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
     elements = []
     styles = getSampleStyleSheet()
-    
+
     # Título
     titulo = Paragraph("<b>CUENTA DE COBRO</b>", styles['Title'])
     elements.append(titulo)
     elements.append(Spacer(1, 0.3*inch))
-    
+
     # Información del pago
     info_data = [
         ['Número de Pago:', pago.numero_pago],
@@ -304,7 +342,7 @@ def generar_cuenta_cobro(request, pago_id):
         ['', ''],
         ['<b>TOTAL A PAGAR:</b>', f'<b>${pago.get_monto_total():,.2f}</b>'],
     ]
-    
+
     tabla = Table(info_data, colWidths=[3*inch, 3*inch])
     tabla.setStyle(TableStyle([
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
@@ -314,10 +352,10 @@ def generar_cuenta_cobro(request, pago_id):
         ('BACKGROUND', (0, -1), (-1, -1), colors.lightgrey),
         ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
     ]))
-    
+
     elements.append(tabla)
     elements.append(Spacer(1, 0.5*inch))
-    
+
     # Información del propietario e inquilino
     propietario = pago.contrato.inmueble.propietario
     inquilino = pago.contrato.inquilino
@@ -327,9 +365,9 @@ def generar_cuenta_cobro(request, pago_id):
         <b>Cédula:</b> {propietario.cedula}<br/>
         <b>Teléfono:</b> {propietario.telefono}<br/>
         <b>Ciudad:</b> {propietario.ciudad or '-'}<br/>
-        <b>Cuenta Bancaria:</b> 1234567890<br/>
-        <b>Banco:</b> Bancolombia<br/>
-        <b>Tipo de Cuenta:</b> Ahorros<br/>
+        <b>Cuenta Bancaria:</b> {cuenta_bancaria}<br/>
+        <b>Banco:</b> {banco}<br/>
+        <b>Tipo de Cuenta:</b> {tipo_cuenta}<br/>
         <b>Referencia de pago:</b> {pago.numero_pago}<br/>
         <br/>
         <b>Pagador:</b> {inquilino.get_full_name()}<br/>
@@ -346,21 +384,21 @@ def generar_cuenta_cobro(request, pago_id):
     """, styles['Normal'])
     elements.append(Spacer(1, 0.3*inch))
     elements.append(instrucciones)
-    
+
     # Generar PDF
     doc.build(elements)
     buffer.seek(0)
-    
+
     # Actualizar registro de generación
     if not pago.cuenta_cobro_generada:
         pago.cuenta_cobro_generada = True
         pago.fecha_generacion_cuenta = timezone.now()
         pago.save()
-    
+
     # Retornar PDF
     response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="cuenta_cobro_{pago.numero_pago}.pdf"'
-    
+
     return response
 
 

@@ -49,6 +49,9 @@
 
                     {% if user.tipo_usuario == 'propietario' %}
                         <div class="d-flex gap-2 mt-3">
+                            <a href="{% url 'pagos:editar_cuenta_cobro' pago.id %}" class="btn btn-primary">
+                                <i class="fas fa-file-pdf"></i> Editar y Generar PDF
+                            </a>
                             <form method="post" action="{% url 'pagos:cambiar_estado' pago.id %}" class="d-inline">
                                 {% csrf_token %}
                                 <input type="hidden" name="nuevo_estado" value="pendiente">
@@ -71,14 +74,15 @@
                                 </button>
                             </form>
                         </div>
-                    {% elif user.tipo_usuario == 'inquilino' and pago.estado == 'pendiente' %}
+                    {% elif user.tipo_usuario == 'inquilino' %}
+                        <a href="{% url 'pagos:cuenta_cobro' pago.id %}" class="btn btn-primary mt-3">
+                            <i class="fas fa-file-pdf"></i> Descargar Cuenta de Cobro
+                        </a>
+                        {% if pago.estado in 'pendiente,vencido' %}
                         <a href="{% url 'pagos:registrar' pago.id %}" class="btn btn-success mt-3">
                             <i class="fas fa-money-bill-wave"></i> Registrar Pago
                         </a>
-                    {% elif user.tipo_usuario == 'inquilino' and pago.estado == 'vencido' %}
-                        <a href="{% url 'pagos:registrar' pago.id %}" class="btn btn-success mt-3">
-                            <i class="fas fa-money-bill-wave"></i> Registrar Pago
-                        </a>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
