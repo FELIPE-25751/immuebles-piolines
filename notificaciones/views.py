@@ -47,11 +47,14 @@ def marcar_como_leida(request, notificacion_id):
     if notificacion.enlace:
         enlace = notificacion.enlace.strip()
         if enlace.startswith('http'):
-            return redirect(enlace)
+            try:
+                return redirect(enlace)
+            except Exception:
+                return redirect('notificaciones:listar')
         try:
             return redirect(enlace)
         except Exception:
-            pass
+            return redirect('notificaciones:listar')
     return redirect('notificaciones:listar')
 
 
