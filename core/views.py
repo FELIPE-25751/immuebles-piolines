@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Sum
 from datetime import datetime, timedelta
 from .forms import RegistroForm, LoginForm, PerfilForm
 from .models import Usuario
@@ -26,12 +26,12 @@ def reportes_generales(request):
     inmueble_filtro = request.GET.get('inmueble')
 
     inmuebles = Inmueble.objects.filter(propietario=usuario)
-    pagos = Pago.objects.filter(inmueble__propietario=usuario)
+    pagos = Pago.objects.filter(contrato__inmueble__propietario=usuario)
     mantenimientos = Mantenimiento.objects.filter(inmueble__propietario=usuario)
     contratos = Contrato.objects.filter(inmueble__propietario=usuario)
 
     if inmueble_filtro:
-        pagos = pagos.filter(inmueble_id=inmueble_filtro)
+        pagos = pagos.filter(contrato__inmueble_id=inmueble_filtro)
         mantenimientos = mantenimientos.filter(inmueble_id=inmueble_filtro)
         contratos = contratos.filter(inmueble_id=inmueble_filtro)
 
@@ -45,8 +45,8 @@ def reportes_generales(request):
         contratos = contratos.filter(fecha_fin__lte=fecha_hasta)
 
     # KPIs
-    total_pagos_recibidos = pagos.filter(estado='pagado').aggregate(total=models.Sum('monto'))['total'] or 0
-    total_pagos_pendientes = pagos.filter(estado='pendiente').aggregate(total=models.Sum('monto'))['total'] or 0
+        total_pagos_recibidos = pagos.filter(estado='pagado').aggregate(total=Sum('monto'))['total'] or 0
+        total_pagos_pendientes = pagos.filter(estado='pendiente').aggregate(total=Sum('monto'))['total'] or 0
     mantenimientos_activos = mantenimientos.exclude(estado__in=['completado','cancelado','rechazado']).count()
     contratos_vigentes = contratos.filter(estado='activo').count()
 
