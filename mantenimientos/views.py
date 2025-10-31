@@ -78,7 +78,6 @@ def solicitar_mantenimiento(request):
             mantenimiento.estado = 'pendiente'
             mantenimiento.save()
             mantenimiento.save_to_firebase()
-            
             # Notificar al propietario
             Notificacion.objects.create(
                 usuario=mantenimiento.inmueble.propietario,
@@ -87,13 +86,11 @@ def solicitar_mantenimiento(request):
                 tipo='mantenimiento',
                 enlace=f'/mantenimientos/{mantenimiento.id}/'
             )
-            
             messages.success(request, 'Solicitud de mantenimiento enviada exitosamente.')
             return redirect('mantenimientos:detalle', mantenimiento_id=mantenimiento.id)
     else:
         form = MantenimientoForm(usuario=request.user)
-    
-    return render(request, 'mantenimientos/form.html', {
+    return render(request, 'mantenimientos/solicitar.html', {
         'form': form,
         'titulo': 'Solicitar Mantenimiento'
     })
