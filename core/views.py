@@ -45,8 +45,8 @@ def reportes_generales(request):
         contratos = contratos.filter(fecha_fin__lte=fecha_hasta)
 
     # KPIs
-        total_pagos_recibidos = pagos.filter(estado='pagado').aggregate(total=Sum('monto'))['total'] or 0
-        total_pagos_pendientes = pagos.filter(estado='pendiente').aggregate(total=Sum('monto'))['total'] or 0
+    total_pagos_recibidos = pagos.filter(estado='pagado').aggregate(total=Sum('monto'))['total'] or 0
+    total_pagos_pendientes = pagos.filter(estado='pendiente').aggregate(total=Sum('monto'))['total'] or 0
     mantenimientos_activos = mantenimientos.exclude(estado__in=['completado','cancelado','rechazado']).count()
     contratos_vigentes = contratos.filter(estado='activo').count()
 
