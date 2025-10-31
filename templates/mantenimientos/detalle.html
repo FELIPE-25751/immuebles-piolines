@@ -200,15 +200,15 @@
             {% endif %}
 
             <!-- Acciones -->
-            {% if user.tipo_usuario == 'propietario' and mantenimiento.estado == 'pendiente' %}
-            <div class="card">
-                <div class="card-body">
-                    <a href="{% url 'mantenimientos:gestionar' mantenimiento.id %}" 
-                       class="btn btn-success w-100">
-                        <i class="fas fa-cog"></i> Gestionar Solicitud
-                    </a>
-                </div>
-            </div>
+            {% if user.tipo_usuario == 'propietario' and mantenimiento.estado not in 'completado,cancelado,rechazado' %}
+                        <div class="card">
+                            <div class="card-body">
+                                <a href="{% url 'mantenimientos:gestionar' mantenimiento.id %}" 
+                                   class="btn btn-success w-100">
+                                    <i class="fas fa-cog"></i> Gestionar Solicitud
+                                </a>
+                            </div>
+                        </div>
             {% endif %}
         </div>
     </div>
