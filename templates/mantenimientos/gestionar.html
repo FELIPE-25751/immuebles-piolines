@@ -57,7 +57,8 @@
                                 {% endif %}
                             </div>
 
-                            <div class="col-md-6 mb-3">
+
+                            <div class="col-md-4 mb-3">
                                 <label for="{{ form.costo_estimado.id_for_label }}" class="form-label">
                                     <i class="fas fa-dollar-sign"></i> Costo Estimado
                                 </label>
@@ -66,10 +67,18 @@
                                 <div class="text-danger">{{ form.costo_estimado.errors }}</div>
                                 {% endif %}
                             </div>
-
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.costo_final.id_for_label }}" class="form-label">
+                                    <i class="fas fa-coins"></i> Costo Final *
+                                </label>
+                                {{ form.costo_final }}
+                                {% if form.costo_final.errors %}
+                                <div class="text-danger">{{ form.costo_final.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 mb-3">
                                 <label for="{{ form.responsable_costo.id_for_label }}" class="form-label">
-                                    <i class="fas fa-user"></i> Responsable del Costo
+                                    <i class="fas fa-user-cog"></i> Responsable del Costo
                                 </label>
                                 {{ form.responsable_costo }}
                                 {% if form.responsable_costo.errors %}
