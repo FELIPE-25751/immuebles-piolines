@@ -117,35 +117,40 @@ def gestionar_mantenimiento(request, mantenimiento_id):
         return redirect('mantenimientos:detalle', mantenimiento_id=mantenimiento.id)
     
     if request.method == 'POST':
-        form = GestionarMantenimientoForm(request.POST, instance=mantenimiento)
-        if form.is_valid():
-            mantenimiento_actualizado = form.save()
-            
-            # Actualizar fechas según el estado
-            if mantenimiento_actualizado.estado == 'en_revision' and not mantenimiento.fecha_revision:
-                mantenimiento_actualizado.fecha_revision = timezone.now()
-            elif mantenimiento_actualizado.estado == 'en_proceso' and not mantenimiento.fecha_inicio:
-                mantenimiento_actualizado.fecha_inicio = timezone.now()
-            elif mantenimiento_actualizado.estado == 'completado' and not mantenimiento.fecha_completado:
-                mantenimiento_actualizado.fecha_completado = timezone.now()
-            
-            mantenimiento_actualizado.save()
-            mantenimiento_actualizado.save_to_firebase()
-            
-            # Notificar al solicitante
-            Notificacion.objects.create(
-                usuario=mantenimiento.solicitante,
-                titulo='Actualización de Mantenimiento',
-                mensaje=f'El mantenimiento {mantenimiento.numero_ticket} ha sido actualizado',
-                tipo='mantenimiento',
-                enlace=f'/mantenimientos/{mantenimiento.id}/'
-            )
-            
-            messages.success(request, 'Mantenimiento actualizado exitosamente.')
-            return redirect('mantenimientos:detalle', mantenimiento_id=mantenimiento.id)
+        try:
+            form = GestionarMantenimientoForm(request.POST, instance=mantenimiento)
+            if form.is_valid():
+                mantenimiento_actualizado = form.save()
+                # Actualizar fechas según el estado
+                if mantenimiento_actualizado.estado == 'en_revision' and not mantenimiento.fecha_revision:
+                    mantenimiento_actualizado.fecha_revision = timezone.now()
+                elif mantenimiento_actualizado.estado == 'en_proceso' and not mantenimiento.fecha_inicio:
+                    mantenimiento_actualizado.fecha_inicio = timezone.now()
+                elif mantenimiento_actualizado.estado == 'completado' and not mantenimiento.fecha_completado:
+                    mantenimiento_actualizado.fecha_completado = timezone.now()
+                mantenimiento_actualizado.save()
+                try:
+                    mantenimiento_actualizado.save_to_firebase()
+                except Exception as e:
+                    messages.warning(request, f'Advertencia: No se pudo sincronizar con Firebase. {str(e)}')
+                # Notificar al solicitante
+                Notificacion.objects.create(
+                    usuario=mantenimiento.solicitante,
+                    titulo='Actualización de Mantenimiento',
+                    mensaje=f'El mantenimiento {mantenimiento.numero_ticket} ha sido actualizado',
+                    tipo='mantenimiento',
+                    enlace=f'/mantenimientos/{mantenimiento.id}/'
+                )
+                messages.success(request, 'Mantenimiento actualizado exitosamente.')
+                return redirect('mantenimientos:detalle', mantenimiento_id=mantenimiento.id)
+            else:
+                messages.error(request, 'Por favor revisa los campos del formulario. Hay errores de validación.')
+        except Exception as e:
+            messages.error(request, f'Ocurrió un error inesperado: {str(e)}')
+            import traceback
+            print(traceback.format_exc())
     else:
         form = GestionarMantenimientoForm(instance=mantenimiento)
-    
     return render(request, 'mantenimientos/gestionar.html', {
         'form': form,
         'mantenimiento': mantenimiento
