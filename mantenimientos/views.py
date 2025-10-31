@@ -71,23 +71,33 @@ def detalle_mantenimiento(request, mantenimiento_id):
 def solicitar_mantenimiento(request):
     """Vista para solicitar un nuevo mantenimiento"""
     if request.method == 'POST':
-        form = MantenimientoForm(request.POST, request.FILES, usuario=request.user)
-        if form.is_valid():
-            mantenimiento = form.save(commit=False)
-            mantenimiento.solicitante = request.user
-            mantenimiento.estado = 'pendiente'
-            mantenimiento.save()
-            mantenimiento.save_to_firebase()
-            # Notificar al propietario
-            Notificacion.objects.create(
-                usuario=mantenimiento.inmueble.propietario,
-                titulo='Nueva Solicitud de Mantenimiento',
-                mensaje=f'Nueva solicitud: {mantenimiento.titulo} en {mantenimiento.inmueble.titulo}',
-                tipo='mantenimiento',
-                enlace=f'/mantenimientos/{mantenimiento.id}/'
-            )
-            messages.success(request, 'Solicitud de mantenimiento enviada exitosamente.')
-            return redirect('mantenimientos:detalle', mantenimiento_id=mantenimiento.id)
+        try:
+            form = MantenimientoForm(request.POST, request.FILES, usuario=request.user)
+            if form.is_valid():
+                mantenimiento = form.save(commit=False)
+                mantenimiento.solicitante = request.user
+                mantenimiento.estado = 'pendiente'
+                mantenimiento.save()
+                try:
+                    mantenimiento.save_to_firebase()
+                except Exception as e:
+                    messages.warning(request, f'Advertencia: No se pudo sincronizar con Firebase. {str(e)}')
+                # Notificar al propietario
+                Notificacion.objects.create(
+                    usuario=mantenimiento.inmueble.propietario,
+                    titulo='Nueva Solicitud de Mantenimiento',
+                    mensaje=f'Nueva solicitud: {mantenimiento.titulo} en {mantenimiento.inmueble.titulo}',
+                    tipo='mantenimiento',
+                    enlace=f'/mantenimientos/{mantenimiento.id}/'
+                )
+                messages.success(request, 'Solicitud de mantenimiento enviada exitosamente.')
+                return redirect('mantenimientos:detalle', mantenimiento_id=mantenimiento.id)
+            else:
+                messages.error(request, 'Por favor revisa los campos del formulario. Hay errores de validación.')
+        except Exception as e:
+            messages.error(request, f'Ocurrió un error inesperado: {str(e)}')
+            import traceback
+            print(traceback.format_exc())
     else:
         form = MantenimientoForm(usuario=request.user)
     return render(request, 'mantenimientos/solicitar.html', {
