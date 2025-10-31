@@ -11,4 +11,5 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('perfil/', views.perfil, name='perfil'),
     path('perfil/<int:user_id>/', views.perfil_usuario, name='perfil_usuario'),
+    path('reportes/', views.reportes_generales, name='reportes_generales'),
 ]

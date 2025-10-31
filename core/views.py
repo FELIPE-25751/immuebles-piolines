@@ -11,7 +11,59 @@ from contratos.models import Contrato
 from pagos.models import Pago
 from mantenimientos.models import Mantenimiento
 from notificaciones.models import Notificacion
+from django.utils import timezone
+# Vista de reportes generales para propietario
+@login_required
+def reportes_generales(request):
+    usuario = request.user
+    if usuario.tipo_usuario != 'propietario':
+        messages.error(request, 'Solo los propietarios pueden acceder a los reportes generales.')
+        return redirect('core:dashboard')
 
+    # Filtros
+    fecha_desde = request.GET.get('fecha_desde')
+    fecha_hasta = request.GET.get('fecha_hasta')
+    inmueble_filtro = request.GET.get('inmueble')
+
+    inmuebles = Inmueble.objects.filter(propietario=usuario)
+    pagos = Pago.objects.filter(inmueble__propietario=usuario)
+    mantenimientos = Mantenimiento.objects.filter(inmueble__propietario=usuario)
+    contratos = Contrato.objects.filter(inmueble__propietario=usuario)
+
+    if inmueble_filtro:
+        pagos = pagos.filter(inmueble_id=inmueble_filtro)
+        mantenimientos = mantenimientos.filter(inmueble_id=inmueble_filtro)
+        contratos = contratos.filter(inmueble_id=inmueble_filtro)
+
+    if fecha_desde:
+        pagos = pagos.filter(fecha_pago__gte=fecha_desde)
+        mantenimientos = mantenimientos.filter(fecha_solicitud__gte=fecha_desde)
+        contratos = contratos.filter(fecha_inicio__gte=fecha_desde)
+    if fecha_hasta:
+        pagos = pagos.filter(fecha_pago__lte=fecha_hasta)
+        mantenimientos = mantenimientos.filter(fecha_solicitud__lte=fecha_hasta)
+        contratos = contratos.filter(fecha_fin__lte=fecha_hasta)
+
+    # KPIs
+    total_pagos_recibidos = pagos.filter(estado='pagado').aggregate(total=models.Sum('monto'))['total'] or 0
+    total_pagos_pendientes = pagos.filter(estado='pendiente').aggregate(total=models.Sum('monto'))['total'] or 0
+    mantenimientos_activos = mantenimientos.exclude(estado__in=['completado','cancelado','rechazado']).count()
+    contratos_vigentes = contratos.filter(estado='activo').count()
+
+    context = {
+        'inmuebles': inmuebles,
+        'pagos': pagos.order_by('-fecha_pago')[:50],
+        'mantenimientos': mantenimientos.order_by('-fecha_solicitud')[:50],
+        'contratos': contratos.order_by('-fecha_inicio')[:50],
+        'fecha_desde': fecha_desde,
+        'fecha_hasta': fecha_hasta,
+        'inmueble_filtro': inmueble_filtro,
+        'total_pagos_recibidos': total_pagos_recibidos,
+        'total_pagos_pendientes': total_pagos_pendientes,
+        'mantenimientos_activos': mantenimientos_activos,
+        'contratos_vigentes': contratos_vigentes,
+    }
+    return render(request, 'core/reportes_generales.html', context)
 
 def index(request):
     """Vista de página principal"""

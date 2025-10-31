@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reportes Generales - InmueblesApp{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow mb-4">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-chart-pie me-2"></i>Reportes Generales del Propietario
+            </h4>
+        </div>
+        <div class="card-body">
+            <!-- Filtros avanzados -->
+            <form method="get" class="mb-4">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label"><i class="fas fa-calendar"></i> Desde:</label>
+                        <input type="date" name="fecha_desde" class="form-control" value="{{ fecha_desde }}">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label"><i class="fas fa-calendar"></i> Hasta:</label>
+                        <input type="date" name="fecha_hasta" class="form-control" value="{{ fecha_hasta }}">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label"><i class="fas fa-home"></i> Inmueble:</label>
+                        <select name="inmueble" class="form-select">
+                            <option value="">Todos</option>
+                            {% for inmueble in inmuebles %}
+                            <option value="{{ inmueble.id }}" {% if inmueble.id|stringformat:'s' == inmueble_filtro %}selected{% endif %}>{{ inmueble.titulo }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label d-block">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Filtrar
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- KPIs y Resúmenes -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h5>Pagos Recibidos</h5>
+                            <h2>${{ total_pagos_recibidos|default:0 }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark">
+                        <div class="card-body text-center">
+                            <h5>Pagos Pendientes</h5>
+                            <h2>${{ total_pagos_pendientes|default:0 }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h5>Mantenimientos Activos</h5>
+                            <h2>{{ mantenimientos_activos|default:0 }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center">
+                            <h5>Contratos Vigentes</h5>
+                            <h2>{{ contratos_vigentes|default:0 }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tablas de detalle -->
+            <ul class="nav nav-tabs mb-3" id="reporteTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pagos-tab" data-bs-toggle="tab" data-bs-target="#pagos" type="button" role="tab">Pagos</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="mantenimientos-tab" data-bs-toggle="tab" data-bs-target="#mantenimientos" type="button" role="tab">Mantenimientos</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contratos-tab" data-bs-toggle="tab" data-bs-target="#contratos" type="button" role="tab">Contratos</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="reporteTabsContent">
+                <div class="tab-pane fade show active" id="pagos" role="tabpanel">
+                    {% include 'pagos/_tabla_reportes.html' %}
+                </div>
+                <div class="tab-pane fade" id="mantenimientos" role="tabpanel">
+                    {% include 'mantenimientos/_tabla_reportes.html' %}
+                </div>
+                <div class="tab-pane fade" id="contratos" role="tabpanel">
+                    {% include 'contratos/_tabla_reportes.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
