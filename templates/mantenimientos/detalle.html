@@ -200,7 +200,7 @@
             {% endif %}
 
             <!-- Acciones -->
-            {% if user.tipo_usuario == 'propietario' and mantenimiento.estado not in 'completado,cancelado,rechazado' %}
+            {% if user.tipo_usuario == 'propietario' %}
                         <div class="card">
                             <div class="card-body">
                                 <a href="{% url 'mantenimientos:gestionar' mantenimiento.id %}" 
