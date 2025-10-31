@@ -88,7 +88,7 @@ def solicitar_mantenimiento(request):
                     titulo='Nueva Solicitud de Mantenimiento',
                     mensaje=f'Nueva solicitud: {mantenimiento.titulo} en {mantenimiento.inmueble.titulo}',
                     tipo='mantenimiento',
-                    enlace=f'/mantenimientos/{mantenimiento.id}/'
+                    enlace=f'/mantenimientos/detalle/{mantenimiento.id}/'
                 )
                 messages.success(request, 'Solicitud de mantenimiento enviada exitosamente.')
                 return redirect('mantenimientos:detalle', mantenimiento_id=mantenimiento.id)
@@ -139,7 +139,7 @@ def gestionar_mantenimiento(request, mantenimiento_id):
                     titulo='Actualización de Mantenimiento',
                     mensaje=f'El mantenimiento {mantenimiento.numero_ticket} ha sido actualizado',
                     tipo='mantenimiento',
-                    enlace=f'/mantenimientos/{mantenimiento.id}/'
+                    enlace=f'/mantenimientos/detalle/{mantenimiento.id}/'
                 )
                 messages.success(request, 'Mantenimiento actualizado exitosamente.')
                 return redirect('mantenimientos:detalle', mantenimiento_id=mantenimiento.id)
