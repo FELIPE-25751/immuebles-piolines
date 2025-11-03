@@ -12,6 +12,8 @@ from pagos.models import Pago
 from mantenimientos.models import Mantenimiento
 from notificaciones.models import Notificacion
 from django.utils import timezone
+# Protección contra fuerza bruta
+from ratelimit.decorators import ratelimit
 # Vista de reportes generales para propietario
 @login_required
 def reportes_generales(request):
@@ -72,6 +74,7 @@ def index(request):
     return render(request, 'core/index.html')
 
 
+@ratelimit(key='ip', rate='3/m', block=True)
 def registro(request):
     """Vista de registro de usuarios"""
     if request.user.is_authenticated:
@@ -92,6 +95,7 @@ def registro(request):
     return render(request, 'core/registro.html', {'form': form})
 
 
+@ratelimit(key='ip', rate='5/m', block=True)
 def login_view(request):
     """Vista de inicio de sesión"""
     if request.user.is_authenticated:
