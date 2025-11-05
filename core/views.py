@@ -12,12 +12,16 @@ from pagos.models import Pago
 from mantenimientos.models import Mantenimiento
 from notificaciones.models import Notificacion
 from django.utils import timezone
+from django.conf import settings
+import requests
 # Protección contra fuerza bruta (import seguro)
 try:
-    from ratelimit.decorators import ratelimit
-except Exception:  # Si no está instalado en el entorno, usar un decorador no-op para no romper producción
-    def ratelimit(*args, **kwargs):
-        def wrapper(view_func):
+    from ratelimit.decorators import ratelimit  # type: ignore[reportMissingImports]
+except ImportError:  # Si no está instalado en el entorno, usar un decorador no-op para no romper producción
+    from typing import Any, Callable
+
+    def ratelimit(*args: Any, **kwargs: Any) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+        def wrapper(view_func: Callable[..., Any]) -> Callable[..., Any]:
             return view_func
         return wrapper
 # Vista de reportes generales para propietario
@@ -81,12 +85,33 @@ def index(request):
 
 
 @ratelimit(key='ip', rate='3/m', block=True)
+@ratelimit(key='post:username', rate='3/m', block=True)
 def registro(request):
     """Vista de registro de usuarios"""
     if request.user.is_authenticated:
         return redirect('core:dashboard')
     
     if request.method == 'POST':
+        # Verificar Turnstile si está configurado
+        if settings.TURNSTILE_SECRET_KEY:
+            token = request.POST.get('cf-turnstile-response')
+            if not token:
+                messages.error(request, 'Por favor completa la verificación de seguridad (CAPTCHA).')
+                form = RegistroForm(request.POST)
+                return render(request, 'core/registro.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
+            try:
+                resp = requests.post('https://challenges.cloudflare.com/turnstile/v0/siteverify', data={
+                    'secret': settings.TURNSTILE_SECRET_KEY,
+                    'response': token,
+                    'remoteip': request.META.get('REMOTE_ADDR')
+                }, timeout=5)
+                ok = resp.json().get('success', False)
+            except Exception:
+                ok = False
+            if not ok:
+                messages.error(request, 'No pudimos verificar que eres humano. Intenta de nuevo.')
+                form = RegistroForm(request.POST)
+                return render(request, 'core/registro.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
         form = RegistroForm(request.POST)
         if form.is_valid():
             usuario = form.save()
@@ -98,16 +123,37 @@ def registro(request):
     else:
         form = RegistroForm()
     
-    return render(request, 'core/registro.html', {'form': form})
+    return render(request, 'core/registro.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
 
 
 @ratelimit(key='ip', rate='5/m', block=True)
+@ratelimit(key='post:username', rate='5/m', block=True)
 def login_view(request):
     """Vista de inicio de sesión"""
     if request.user.is_authenticated:
         return redirect('core:dashboard')
     
     if request.method == 'POST':
+        # Verificar Turnstile si está configurado
+        if settings.TURNSTILE_SECRET_KEY:
+            token = request.POST.get('cf-turnstile-response')
+            if not token:
+                messages.error(request, 'Por favor completa la verificación de seguridad (CAPTCHA).')
+                form = LoginForm(request, data=request.POST)
+                return render(request, 'core/login.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
+            try:
+                resp = requests.post('https://challenges.cloudflare.com/turnstile/v0/siteverify', data={
+                    'secret': settings.TURNSTILE_SECRET_KEY,
+                    'response': token,
+                    'remoteip': request.META.get('REMOTE_ADDR')
+                }, timeout=5)
+                ok = resp.json().get('success', False)
+            except Exception:
+                ok = False
+            if not ok:
+                messages.error(request, 'No pudimos verificar que eres humano. Intenta de nuevo.')
+                form = LoginForm(request, data=request.POST)
+                return render(request, 'core/login.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
@@ -122,7 +168,7 @@ def login_view(request):
     else:
         form = LoginForm()
     
-    return render(request, 'core/login.html', {'form': form})
+    return render(request, 'core/login.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
 
 
 @login_required

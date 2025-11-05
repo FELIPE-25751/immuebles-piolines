@@ -241,3 +241,7 @@ else:
 
 # Usar la caché por defecto para django-ratelimit
 RATELIMIT_USE_CACHE = 'default'
+
+# Cloudflare Turnstile (CAPTCHA)
+TURNSTILE_SITE_KEY = config('TURNSTILE_SITE_KEY', default='')
+TURNSTILE_SECRET_KEY = config('TURNSTILE_SECRET_KEY', default='')
