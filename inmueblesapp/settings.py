@@ -221,3 +221,23 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
+
+# Cache para rate limiting
+# En desarrollo (SQLite) usa caché en memoria; en producción (PostgreSQL) usa caché en base de datos
+if DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-immuebles-cache',
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'ratelimit_cache',
+        }
+    }
+
+# Usar la caché por defecto para django-ratelimit
+RATELIMIT_USE_CACHE = 'default'

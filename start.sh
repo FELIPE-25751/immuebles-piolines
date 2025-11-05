@@ -23,6 +23,12 @@ for i in {1..10}; do
   sleep 5
 done
 
+echo "Asegurando la tabla de caché para rate limiting (si aplica)..."
+for i in {1..5}; do
+  python manage.py createcachetable ratelimit_cache && break || true
+  sleep 2
+done
+
 echo "Recolectando archivos estáticos..."
 python manage.py collectstatic --noinput --clear
 
