@@ -103,10 +103,20 @@ class Contrato(models.Model):
         """Retorna la duración del contrato en meses"""
         delta = self.fecha_fin - self.fecha_inicio
         return delta.days // 30
+
+    @property
+    def duracion_meses(self):
+        """Alias de solo lectura para usar en plantillas."""
+        return self.get_duracion_meses()
     
     def get_valor_total_mensual(self):
         """Retorna el valor total mensual incluyendo administración"""
         return self.valor_arriendo + self.valor_administracion
+
+    @property
+    def valor_total(self):
+        """Total mensual (arriendo + administración) para uso en plantillas."""
+        return self.get_valor_total_mensual()
     
     def esta_vigente(self):
         """Verifica si el contrato está vigente"""

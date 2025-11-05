@@ -94,10 +94,10 @@
                         <strong><i class="fas fa-calendar-day"></i> Día de Pago:</strong> {{ contrato.dia_pago }}
                     </p>
 
-                    {% if contrato.deposito_seguridad %}
+                    {% if contrato.valor_deposito %}
                     <p class="mb-2">
                         <strong><i class="fas fa-shield-alt"></i> Depósito de Seguridad:</strong><br>
-                        ${{ contrato.deposito_seguridad|floatformat:0 }}
+                        ${{ contrato.valor_deposito|floatformat:0 }}
                     </p>
                     {% endif %}
 
