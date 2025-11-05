@@ -14,6 +14,7 @@ from notificaciones.models import Notificacion
 from django.utils import timezone
 from django.conf import settings
 import requests
+import random
 # Protección contra fuerza bruta (import seguro)
 try:
     from ratelimit.decorators import ratelimit  # type: ignore[reportMissingImports]
@@ -24,6 +25,37 @@ except ImportError:  # Si no está instalado en el entorno, usar un decorador no
         def wrapper(view_func: Callable[..., Any]) -> Callable[..., Any]:
             return view_func
         return wrapper
+
+# Utilidades simples de CAPTCHA (fallback cuando no hay Turnstile)
+def _prepare_simple_captcha(request):
+    """Genera y guarda en sesión un desafío aritmético simple."""
+    a = random.randint(1, 9)
+    b = random.randint(1, 9)
+    request.session['captcha_sum'] = a + b
+    request.session['captcha_ts'] = int(timezone.now().timestamp())
+    return {'captcha_a': a, 'captcha_b': b}
+
+def _validate_simple_captcha(request):
+    """Valida el CAPTCHA simple basado en sesión. Devuelve (ok, mensaje_error)."""
+    # Honeypot: bots suelen completar campos ocultos
+    if request.POST.get('website'):
+        return False, 'Detección de bot (honeypot).'
+    try:
+        answer = int(request.POST.get('captcha_answer', '').strip())
+    except Exception:
+        return False, 'Resuelve la pregunta de verificación.'
+
+    expected = request.session.get('captcha_sum')
+    ts = request.session.get('captcha_ts')
+    if expected is None or ts is None:
+        return False, 'Vuelve a intentar la verificación.'
+    # Expira en 3 minutos
+    now_ts = int(timezone.now().timestamp())
+    if now_ts - int(ts) > 180:
+        return False, 'La verificación expiró. Intenta nuevamente.'
+    if answer != int(expected):
+        return False, 'Respuesta incorrecta de verificación.'
+    return True, ''
 # Vista de reportes generales para propietario
 @login_required
 def reportes_generales(request):
@@ -98,7 +130,8 @@ def registro(request):
             if not token:
                 messages.error(request, 'Por favor completa la verificación de seguridad (CAPTCHA).')
                 form = RegistroForm(request.POST)
-                return render(request, 'core/registro.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
+                ctx = {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY}
+                return render(request, 'core/registro.html', ctx)
             try:
                 resp = requests.post('https://challenges.cloudflare.com/turnstile/v0/siteverify', data={
                     'secret': settings.TURNSTILE_SECRET_KEY,
@@ -111,7 +144,17 @@ def registro(request):
             if not ok:
                 messages.error(request, 'No pudimos verificar que eres humano. Intenta de nuevo.')
                 form = RegistroForm(request.POST)
-                return render(request, 'core/registro.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
+                ctx = {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY}
+                return render(request, 'core/registro.html', ctx)
+        else:
+            # Fallback CAPTCHA simple sin claves/env vars
+            ok, err = _validate_simple_captcha(request)
+            if not ok:
+                messages.error(request, err)
+                form = RegistroForm(request.POST)
+                # Generar nuevo desafío
+                ctx = {'form': form, 'turnstile_site_key': '', **_prepare_simple_captcha(request)}
+                return render(request, 'core/registro.html', ctx)
         form = RegistroForm(request.POST)
         if form.is_valid():
             usuario = form.save()
@@ -122,8 +165,10 @@ def registro(request):
             messages.error(request, 'Por favor corrige los errores en el formulario.')
     else:
         form = RegistroForm()
+        # Preparar desafío solo si no hay Turnstile
+        extra = _prepare_simple_captcha(request) if not settings.TURNSTILE_SECRET_KEY else {}
     
-    return render(request, 'core/registro.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
+    return render(request, 'core/registro.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY, **extra})
 
 
 @ratelimit(key='ip', rate='5/m', block=True)
@@ -140,7 +185,8 @@ def login_view(request):
             if not token:
                 messages.error(request, 'Por favor completa la verificación de seguridad (CAPTCHA).')
                 form = LoginForm(request, data=request.POST)
-                return render(request, 'core/login.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
+                ctx = {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY}
+                return render(request, 'core/login.html', ctx)
             try:
                 resp = requests.post('https://challenges.cloudflare.com/turnstile/v0/siteverify', data={
                     'secret': settings.TURNSTILE_SECRET_KEY,
@@ -153,7 +199,17 @@ def login_view(request):
             if not ok:
                 messages.error(request, 'No pudimos verificar que eres humano. Intenta de nuevo.')
                 form = LoginForm(request, data=request.POST)
-                return render(request, 'core/login.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
+                ctx = {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY}
+                return render(request, 'core/login.html', ctx)
+        else:
+            # Fallback CAPTCHA simple sin claves/env vars
+            ok, err = _validate_simple_captcha(request)
+            if not ok:
+                messages.error(request, err)
+                form = LoginForm(request, data=request.POST)
+                ctx = {'form': form, 'turnstile_site_key': ''}
+                ctx.update(_prepare_simple_captcha(request))
+                return render(request, 'core/login.html', ctx)
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
@@ -167,8 +223,10 @@ def login_view(request):
             messages.error(request, 'Usuario o contraseña incorrectos.')
     else:
         form = LoginForm()
+        # Preparar desafío solo si no hay Turnstile
+        extra = _prepare_simple_captcha(request) if not settings.TURNSTILE_SECRET_KEY else {}
     
-    return render(request, 'core/login.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY})
+    return render(request, 'core/login.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY, **extra})
 
 
 @login_required

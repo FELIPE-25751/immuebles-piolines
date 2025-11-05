@@ -107,6 +107,16 @@
                         <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}"></div>
                     </div>
                     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                    {% else %}
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-shield-alt"></i> Verificación</label>
+                        <div class="input-group">
+                            <span class="input-group-text">{{ captcha_a }} + {{ captcha_b }} =</span>
+                            <input type="number" name="captcha_answer" class="form-control" required>
+                        </div>
+                        <input type="text" name="website" class="d-none" autocomplete="off">
+                        <small class="form-text text-muted">Esta verificación nos ayuda a evitar bots.</small>
+                    </div>
                     {% endif %}
 
                     <div class="d-grid gap-2 mb-3">
