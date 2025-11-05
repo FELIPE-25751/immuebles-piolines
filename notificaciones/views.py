@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from .models import Notificacion, ConfiguracionNotificaciones
+from django.urls import reverse
+import re
 
 
 @login_required
@@ -46,6 +48,19 @@ def marcar_como_leida(request, notificacion_id):
     # Si hay un enlace, redirigir allí (absoluto o relativo)
     if notificacion.enlace:
         enlace = notificacion.enlace.strip()
+        # Normalizar enlaces antiguos a rutas actuales
+        try:
+            m = re.match(r'^/contratos/(\d+)/$', enlace)
+            if m:
+                return redirect(reverse('contratos:detalle', args=[int(m.group(1))]))
+            m = re.match(r'^/pagos/(\d+)/$', enlace)
+            if m:
+                return redirect(reverse('pagos:detalle', args=[int(m.group(1))]))
+            m = re.match(r'^/mantenimientos/(\d+)/$', enlace)
+            if m:
+                return redirect(reverse('mantenimientos:detalle', args=[int(m.group(1))]))
+        except Exception:
+            pass
         if enlace.startswith('http'):
             try:
                 return redirect(enlace)
