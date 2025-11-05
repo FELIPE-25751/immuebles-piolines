@@ -1,0 +1,607 @@
+<mxfile host="65bd71144e">
+    <diagram id="overview" name="00 - Overview">
+        <mxGraphModel dx="516" dy="475" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" background="#FFFFFF" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="legend" value="ERD Overview: 11 módulos\nMultitenencia (tenant_id), BIGSERIAL, soft-delete" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="40" width="320" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_identidad" value="Identidad / Tenants" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="180" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_catalogos" value="Catálogos / Geografía" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="180" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_inmuebles" value="Inmuebles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="180" width="160" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_contratos" value="Contratos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="180" width="160" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_pagos" value="Pagos / Contable" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="180" width="200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_mant" value="Mantenimientos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;" parent="1" vertex="1">
+                    <mxGeometry x="1200" y="180" width="180" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_notif" value="Notificaciones" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="300" width="180" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_integr" value="Integraciones / Jobs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="300" width="200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_report" value="Reportes / Snapshots" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;" parent="1" vertex="1">
+                    <mxGeometry x="980" y="300" width="200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_chat" value="Mensajería / Chats" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;" parent="1" vertex="1">
+                    <mxGeometry x="1200" y="300" width="200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_archivos" value="Archivos / Etiquetas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;" parent="1" vertex="1">
+                    <mxGeometry x="1420" y="300" width="200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" style="endArrow=classic;strokeColor=#4C4C4C;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" parent="1" source="m_inmuebles" target="m_contratos" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" style="endArrow=classic;strokeColor=#4C4C4C;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" parent="1" source="m_contratos" target="m_pagos" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" style="dashed=1;endArrow=classic;strokeColor=#666666;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" parent="1" source="m_contratos" target="m_notif" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" style="dashed=1;endArrow=classic;strokeColor=#666666;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;" parent="1" source="m_mant" target="m_pagos" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-identidad" name="01 - Identidad / Tenants">
+        <mxGraphModel dx="3716" dy="2275" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="tbl_tenant" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;tenant&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— nombre&lt;br&gt;— created/updated/deleted&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="60" width="280" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_usuario" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;usuario&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— username/email&lt;br&gt;— tipo&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="60" width="320" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_rol" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;rol&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— nombre UNIQUE&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="260" width="260" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_perm" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;permiso&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— codigo UNIQUE&lt;br&gt;— descripcion&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="260" width="260" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_rolperm" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;rol_permiso&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— rol_id (FK)&lt;br&gt;— permiso_id (FK) UNIQUE par&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="260" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_userrol" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;usuario_rol&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— usuario_id (FK)&lt;br&gt;— rol_id (FK) UNIQUE par&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="60" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_sesion" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;sesion_usuario&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— usuario_id (FK)&lt;br&gt;— ultimo_login, ip, ua&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="60" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_audit" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;auditoria_evento&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id/usuario_id (FK)&lt;br&gt;— entidad, accion, datos&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="260" width="360" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_pref" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;preferencia_usuario&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— usuario_id (FK)&lt;br&gt;— clave UNIQUE por usuario&lt;br&gt;— valor&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="460" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_prov" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;proveedor&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— nombre, email, telefono&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="-10" y="460" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_cliente" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;cliente&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— usuario_id (FK) opcional&lt;br&gt;— nombre, email&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="460" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_user_tenant" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_usuario" target="tbl_tenant" edge="1"/>
+                <mxCell id="e_rol_tenant" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_rol" target="tbl_tenant" edge="1"/>
+                <mxCell id="e_userrol_user" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_userrol" target="tbl_usuario" edge="1"/>
+                <mxCell id="e_userrol_rol" style="endArrow=block;dashed=1;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_userrol" target="tbl_rol" edge="1"/>
+                <mxCell id="e_rolperm_rol" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_rolperm" target="tbl_rol" edge="1"/>
+                <mxCell id="e_rolperm_perm" style="endArrow=block;dashed=1;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_rolperm" target="tbl_perm" edge="1"/>
+                <mxCell id="e_sesion_user" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_sesion" target="tbl_usuario" edge="1"/>
+                <mxCell id="e_audit_tenant" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_audit" target="tbl_tenant" edge="1"/>
+                <mxCell id="e_pref_user" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_pref" target="tbl_usuario" edge="1"/>
+                <mxCell id="e_prov_tenant" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_prov" target="tbl_tenant" edge="1"/>
+                <mxCell id="e_cli_tenant" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_cliente" target="tbl_tenant" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-catalogos" name="02 - Catálogos / Geografía">
+        <mxGraphModel dx="2116" dy="1375" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="tbl_pais" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;pais&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— nombre&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="60" width="220" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_ciudad" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;ciudad&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— pais_id (FK)&lt;br&gt;— nombre&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="60" width="240" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_barrio" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;barrio&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— ciudad_id (FK)&lt;br&gt;— nombre&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="60" width="240" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_tipoinm" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;tipo_inmueble&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— nombre&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="240" width="220" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_tipodoc" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;tipo_documento&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— nombre&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="240" width="220" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_banco" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;banco&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— nombre&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="240" width="220" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_moneda" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;moneda&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— codigo UNIQUE&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="840" y="240" width="240" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_impuesto" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;impuesto&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— nombre&lt;br&gt;— tasa&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1100" y="240" width="240" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_estado" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;estado_generico&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— modulo, nombre&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="420" width="280" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_motivo" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;motivo_generico&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— modulo, nombre&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="420" width="280" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_ciudad_pais" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_ciudad" target="tbl_pais" edge="1"/>
+                <mxCell id="e_barrio_ciudad" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_barrio" target="tbl_ciudad" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-inmuebles" name="03 - Inmuebles">
+        <mxGraphModel dx="516" dy="475" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="tbl_inmueble" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;inmueble&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— propietario_id (FK)&lt;br&gt;— tipo_id (FK)&lt;br&gt;— ...&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="60" width="260" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_imagen" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;imagen_inmueble&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— inmueble_id (FK)&lt;br&gt;— url&lt;br&gt;— principal...&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="60" width="260" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_caract" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;caracteristica_inmueble&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— inmueble_id (FK)&lt;br&gt;— tipo_id (FK)&lt;br&gt;— valor&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="60" width="260" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_caract_tipo" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;caracteristica_tipo&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— nombre&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="260" width="240" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_doc" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;documento_inmueble&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— inmueble_id (FK)&lt;br&gt;— tipo_documento_id (FK)&lt;br&gt;— ruta&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="280" width="260" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_ii" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_imagen" target="tbl_inmueble" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_ci" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_caract" target="tbl_inmueble" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_ct_ci" style="endArrow=block;dashed=1;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_caract" target="tbl_caract_tipo" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_di" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_doc" target="tbl_inmueble" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_visita" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;visita_inmueble&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— inmueble_id (FK)&lt;br&gt;— interesado_id (FK)&lt;br&gt;— agendada_para&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="300" width="260" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_bloqueo" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;bloqueo_calendario&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— inmueble_id (FK)&lt;br&gt;— fecha_inicio/fin&lt;br&gt;— motivo&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="280" width="260" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_avaluo" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;avaluo_inmueble&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— inmueble_id (FK)&lt;br&gt;— valor&lt;br&gt;— fecha&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="60" width="240" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_hist_est_inm" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;historial_estado_inmueble&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— inmueble_id (FK)&lt;br&gt;— estado_id (FK)&lt;br&gt;— cambiado_en&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="220" width="280" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_vi" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_visita" target="tbl_inmueble" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_bi" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_bloqueo" target="tbl_inmueble" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_ai" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_avaluo" target="tbl_inmueble" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_hsi" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_hist_est_inm" target="tbl_inmueble" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-cross" name="12 - Relaciones Transversales">
+        <mxGraphModel dx="2116" dy="1375" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="x_usuario" value="usuario (Identidad)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="80" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="x_inmueble" value="inmueble (Inmuebles)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="80" width="240" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="x_contrato" value="contrato (Contratos)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="80" width="240" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="x_pago" value="pago (Pagos)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="80" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="x_mant" value="orden_trabajo (Mantenimientos)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="240" width="260" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="x_notif" value="notificacion (Notificaciones)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="240" width="260" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="x_evento" value="evento (Notificaciones)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="240" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="x_arch" value="archivo (Archivos)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="240" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="x_cuenta" value="cuenta_bancaria (Pagos)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;" parent="1" vertex="1">
+                    <mxGeometry x="1220" y="80" width="260" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_contrato_inmueble" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="x_contrato" target="x_inmueble" edge="1"/>
+                <mxCell id="e_contrato_usuario_inq" value="inquilino_id" style="endArrow=block;dashed=1;labelBackgroundColor=#ffffff;" parent="1" source="x_contrato" target="x_usuario" edge="1"/>
+                <mxCell id="e_inmueble_usuario_prop" value="propietario_id" style="endArrow=block;dashed=1;labelBackgroundColor=#ffffff;" parent="1" source="x_inmueble" target="x_usuario" edge="1"/>
+                <mxCell id="e_pago_contrato" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="x_pago" target="x_contrato" edge="1"/>
+                <mxCell id="e_evento_contrato" style="endArrow=block;dashed=1;" parent="1" source="x_evento" target="x_contrato" edge="1"/>
+                <mxCell id="e_evento_pago" style="endArrow=block;dashed=1;" parent="1" source="x_evento" target="x_pago" edge="1"/>
+                <mxCell id="e_evento_mant" style="endArrow=block;dashed=1;" parent="1" source="x_evento" target="x_mant" edge="1"/>
+                <mxCell id="e_notif_usuario" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="x_notif" target="x_usuario" edge="1"/>
+                <mxCell id="e_arch_usuario" style="endArrow=block;dashed=1;" parent="1" source="x_arch" target="x_usuario" edge="1"/>
+                <mxCell id="e_cuenta_usuario" style="endArrow=block;dashed=1;" parent="1" source="x_cuenta" target="x_usuario" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-contratos" name="02 - Contratos">
+        <mxGraphModel dx="2116" dy="1158" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="tbl_contrato" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;contrato&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size:11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— inmueble_id (FK)&lt;br&gt;— inquilino_id (FK)&lt;br&gt;— estado_id (FK)&lt;br&gt;— fechas y valores&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="60" width="280" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_firma" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;firma_contrato&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size:11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id (FK)&lt;br&gt;— usuario_id (FK)&lt;br&gt;— firmado_en&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="60" width="260" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_hist" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;historial_estado_contrato&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size:11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id (FK)&lt;br&gt;— estado_id (FK)&lt;br&gt;— motivo_id (FK)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="260" width="300" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_fc" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_firma" target="tbl_contrato" edge="1"/>
+                <mxCell id="edge_hc" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_hist" target="tbl_contrato" edge="1"/>
+                <mxCell id="tbl_anexo" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;anexo_contrato&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size:11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id (FK)&lt;br&gt;— tipo_documento_id (FK)&lt;br&gt;— ruta&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="60" width="260" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_doc_contrato" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;documento_contrato&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size:11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id (FK)&lt;br&gt;— tipo_documento_id (FK)&lt;br&gt;— ruta&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="240" width="260" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_prorroga" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;prorroga_contrato&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size:11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id (FK)&lt;br&gt;— nueva_fecha_fin&lt;br&gt;— aprobado_por (FK)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="300" width="300" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_penalidad" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;penalidad_contrato&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size:11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id (FK)&lt;br&gt;— descripcion&lt;br&gt;— monto&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="60" width="260" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_garantia" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;garantia_contrato&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size:11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id (FK)&lt;br&gt;— descripcion&lt;br&gt;— valor&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="240" width="260" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_version" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;version_contrato&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size:11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id (FK)&lt;br&gt;— numero_version&lt;br&gt;— contenido&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="440" width="300" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_solicitud" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;solicitud_arriendo&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size:11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— inmueble_id (FK)&lt;br&gt;— solicitante_id (FK)&lt;br&gt;— propietario_id (FK)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="440" width="300" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_anx_c" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_anexo" target="tbl_contrato" edge="1"/>
+                <mxCell id="edge_doc_c" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_doc_contrato" target="tbl_contrato" edge="1"/>
+                <mxCell id="edge_pro_c" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_prorroga" target="tbl_contrato" edge="1"/>
+                <mxCell id="edge_pen_c" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_penalidad" target="tbl_contrato" edge="1"/>
+                <mxCell id="edge_gar_c" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_garantia" target="tbl_contrato" edge="1"/>
+                <mxCell id="edge_ver_c" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_version" target="tbl_contrato" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-pagos" name="03 - Pagos / Contable">
+        <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="tbl_pago" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;pago&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id (FK)&lt;br&gt;— periodo_inicio/fin&lt;br&gt;— estado, montos&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="60" width="300" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_reg_pago" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;registro_pago&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— pago_id (FK)&lt;br&gt;— monto&lt;br&gt;— medio/comprobante&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="60" width="280" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_factura" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;factura&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id (FK)&lt;br&gt;— numero, total&lt;br&gt;— moneda_id (FK)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="300" width="300" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_fact_det" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;factura_detalle&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— factura_id (FK)&lt;br&gt;— descripcion&lt;br&gt;— cantidad, precio&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="300" width="280" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_imp_det" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;impuesto_detalle&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— factura_id (FK)&lt;br&gt;— impuesto_id (FK)&lt;br&gt;— base, valor&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="300" width="280" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_nc" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;nota_credito&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— factura_id (FK)&lt;br&gt;— motivo&lt;br&gt;— valor&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="60" width="260" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_nd" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;nota_debito&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— factura_id (FK)&lt;br&gt;— motivo&lt;br&gt;— valor&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1000" y="60" width="260" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_cb" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;cuenta_bancaria&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— usuario_id (FK)&lt;br&gt;— banco_id/moneda_id (FK)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1000" y="300" width="300" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_conc" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;conciliacion_bancaria&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— cuenta_bancaria_id (FK)&lt;br&gt;— periodo&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1320" y="300" width="280" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_trx" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;transaccion_bancaria&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— cuenta_bancaria_id (FK)&lt;br&gt;— fecha, valor&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1320" y="60" width="280" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_asiento" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;asiento_contable&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id (FK)&lt;br&gt;— fecha, descripcion&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="520" width="300" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_asidet" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;asiento_detalle&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— asiento_id (FK)&lt;br&gt;— cuenta, debe, haber&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="520" width="280" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_reg_pago" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_reg_pago" target="tbl_pago" edge="1"/>
+                <mxCell id="e_fac_det" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_fact_det" target="tbl_factura" edge="1"/>
+                <mxCell id="e_imp_fac" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_imp_det" target="tbl_factura" edge="1"/>
+                <mxCell id="e_nc_fac" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_nc" target="tbl_factura" edge="1"/>
+                <mxCell id="e_nd_fac" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_nd" target="tbl_factura" edge="1"/>
+                <mxCell id="e_conc_cb" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_conc" target="tbl_cb" edge="1"/>
+                <mxCell id="e_trx_cb" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_trx" target="tbl_cb" edge="1"/>
+                <mxCell id="e_asidet_asiento" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_asidet" target="tbl_asiento" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-mantenimiento" name="04 - Mantenimientos">
+        <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="tbl_solmnt" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;solicitud_mantenimiento&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— inmueble_id (FK)&lt;br&gt;— solicitante_id (FK)&lt;br&gt;— estado_id (FK)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="60" width="320" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_ot" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;orden_trabajo&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— solicitud_id (FK)&lt;br&gt;— proveedor_id/asignado_a (FK)&lt;br&gt;— estado_id (FK)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="60" width="340" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_rep" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;repuesto&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— nombre&lt;br&gt;— precio&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="60" width="220" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_ordrep" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;orden_repuesto&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— orden_id (FK)&lt;br&gt;— repuesto_id (FK)&lt;br&gt;— cantidad, precio&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1060" y="60" width="300" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_evid" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;evidencia_mantenimiento&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— orden_id (FK)&lt;br&gt;— url, nota&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="300" width="300" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_cot" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;cotizacion_mantenimiento&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— solicitud_id (FK)&lt;br&gt;— proveedor_id (FK)&lt;br&gt;— valor&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="300" width="340" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_apr" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;aprobacion_mantenimiento&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— cotizacion_id (FK)&lt;br&gt;— aprobado_por (FK)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="500" width="340" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_sla" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;sla_mantenimiento&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— orden_id (FK)&lt;br&gt;— tiempo_objetivo_horas&lt;br&gt;— cumplido&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="500" width="300" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_histmnt" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;historial_estado_mantenimiento&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— orden_id (FK)&lt;br&gt;— estado_id (FK)&lt;br&gt;— cambiado_en&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="760" y="300" width="340" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_ot_sol" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_ot" target="tbl_solmnt" edge="1"/>
+                <mxCell id="e_ordrep_ot" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_ordrep" target="tbl_ot" edge="1"/>
+                <mxCell id="e_ordrep_rep" style="endArrow=block;dashed=1;" parent="1" source="tbl_ordrep" target="tbl_rep" edge="1"/>
+                <mxCell id="e_evid_ot" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_evid" target="tbl_ot" edge="1"/>
+                <mxCell id="e_cot_sol" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_cot" target="tbl_solmnt" edge="1"/>
+                <mxCell id="e_apr_cot" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_apr" target="tbl_cot" edge="1"/>
+                <mxCell id="e_sla_ot" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_sla" target="tbl_ot" edge="1"/>
+                <mxCell id="e_hist_ot" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_histmnt" target="tbl_ot" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-notificaciones" name="05 - Notificaciones">
+        <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="tbl_plantilla" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;plantilla_notificacion&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— codigo UNIQUE&lt;br&gt;— canal, asunto, cuerpo&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="60" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_notif" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;notificacion&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id/usuario_id (FK)&lt;br&gt;— titulo, mensaje&lt;br&gt;— enlace, leida&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="60" width="360" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_evento" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;evento&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— contrato_id/pago_id/mantenimiento_id (FK)&lt;br&gt;— tipo, creado_en&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="260" width="360" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_envio" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;envio_notificacion&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— notificacion_id (FK)&lt;br&gt;— canal, estado, intentos&lt;br&gt;— enviado_en&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="300" width="360" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_prefn" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;preferencia_notificacion&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— usuario_id (FK)&lt;br&gt;— canal UNIQUE por usuario&lt;br&gt;— habilitado&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="60" width="360" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_webhook" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;webhook_externo&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— url, secreto, activo&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="260" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_logwh" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;log_webhook&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— webhook_id (FK)&lt;br&gt;— evento_id (FK)&lt;br&gt;— estado, respuesta&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1180" y="260" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_env_notif" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_envio" target="tbl_notif" edge="1"/>
+                <mxCell id="e_log_wh" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_logwh" target="tbl_webhook" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-integraciones" name="06 - Integraciones / Jobs">
+        <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="tbl_job" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;job_programado&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— nombre, cron, activo&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="60" width="300" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_ejec" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;job_ejecucion&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— job_id (FK)&lt;br&gt;— inicio, fin, exito&lt;br&gt;— detalle&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="60" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_endpoint" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;endpoint_externo&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— nombre, base_url&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="260" width="280" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_mapeo" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;mapeo_endpoint&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— endpoint_id (FK)&lt;br&gt;— entidad&lt;br&gt;— mapeo JSONB&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="260" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_logintegr" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;log_integracion&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— endpoint_id (FK)&lt;br&gt;— payload/resp JSONB&lt;br&gt;— creado_en&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="260" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_cola" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;cola_mensajes&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— tema, mensaje JSONB&lt;br&gt;— encolado_en&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="460" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_intento" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;intento_cola&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— cola_id (FK)&lt;br&gt;— intento, estado&lt;br&gt;— detalle&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="460" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_job_ejec" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_ejec" target="tbl_job" edge="1"/>
+                <mxCell id="e_mapeo_ep" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_mapeo" target="tbl_endpoint" edge="1"/>
+                <mxCell id="e_logintegr_ep" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_logintegr" target="tbl_endpoint" edge="1"/>
+                <mxCell id="e_intento_cola" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_intento" target="tbl_cola" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-reportes" name="07 - Reportes / Snapshots">
+        <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="tbl_snap" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;snapshot_mensual&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— periodo, kpis JSONB&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="60" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_metrica" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;metrica_agrupada&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— nombre, dimensiones JSONB&lt;br&gt;— valor&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="60" width="360" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_prog" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;programacion_reporte&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— nombre, cron, activo&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="260" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_ejec_rep" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;ejecucion_reporte&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— programacion_id (FK)&lt;br&gt;— inicio, fin, exito, salida&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="260" width="360" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_vm" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;vista_materializada_control&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— nombre&lt;br&gt;— ultima_actualizacion&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="60" width="360" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_coment" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;comentario_reporte&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— reporte_id (FK)&lt;br&gt;— usuario_id (FK)&lt;br&gt;— comentario&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="260" width="360" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_ejec_prog" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_ejec_rep" target="tbl_prog" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-chat" name="08 - Mensajería / Chats">
+        <mxGraphModel dx="2116" dy="1158" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="tbl_conv" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;conversacion&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— asunto, creado_en&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="60" width="300" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_conv_user" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;conversacion_usuario&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— conversacion_id (FK)&lt;br&gt;— usuario_id (FK) UNIQUE por conv&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="60" width="360" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_msg" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;mensaje&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— conversacion_id (FK)&lt;br&gt;— autor_id (FK)&lt;br&gt;— cuerpo, enviado_en&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="260" width="360" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_leido" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;mensaje_leido&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— mensaje_id (FK)&lt;br&gt;— usuario_id (FK) UNIQUE por msg&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="260" width="360" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_adj" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;adjunto_mensaje&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— mensaje_id (FK)&lt;br&gt;— ruta&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="260" width="280" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_den" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;denuncia_mensaje&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— mensaje_id (FK)&lt;br&gt;— reportado_por (FK)&lt;br&gt;— motivo&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="60" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_conv_user" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_conv_user" target="tbl_conv" edge="1"/>
+                <mxCell id="e_msg_conv" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_msg" target="tbl_conv" edge="1"/>
+                <mxCell id="e_leido_msg" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_leido" target="tbl_msg" edge="1"/>
+                <mxCell id="e_adj_msg" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_adj" target="tbl_msg" edge="1"/>
+                <mxCell id="e_den_msg" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_den" target="tbl_msg" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-archivos" name="09 - Archivos / Etiquetas">
+        <mxGraphModel dx="2116" dy="1158" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="tbl_arch" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;archivo&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— ruta, tipo&lt;br&gt;— creado_por (FK)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="60" width="300" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_archrel" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;archivo_relacion&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— archivo_id (FK)&lt;br&gt;— entidad, entidad_id&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="60" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_tag" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;tag&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— nombre&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="260" width="280" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_etag" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;entidad_tag&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tag_id (FK)&lt;br&gt;— entidad, entidad_id&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="260" width="320" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_fav" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;favorito&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— usuario_id (FK)&lt;br&gt;— entidad, entidad_id&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="60" width="300" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="tbl_tarea" value="&lt;div style=&#39;font-weight:600;background:#E8F1FE;border-bottom:1px solid #B7C9F7;padding:4px 6px;&#39;&gt;tarea&lt;/div&gt;&lt;div style=&#39;font-family:Consolas,monospace;font-size=11px;line-height:1.35;padding:6px 8px;&#39;&gt;— id (PK)&lt;br&gt;— tenant_id (FK)&lt;br&gt;— titulo, descripcion&lt;br&gt;— asignado_a (FK), estado_id (FK)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=left;fontFamily=Consolas;fontSize=12;strokeColor=#6C8EBF;fillColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="260" width="360" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_archrel_arch" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_archrel" target="tbl_arch" edge="1"/>
+                <mxCell id="e_etag_tag" style="endArrow=block;edgeStyle=orthogonalEdgeStyle;strokeWidth=2;strokeColor=#4C4C4C;" parent="1" source="tbl_etag" target="tbl_tag" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="mod-global" name="13 - Global Completo">
+        <mxGraphModel dx="22320" dy="10760" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1400" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="g_note" value="Global Completo (imprimible)\n• Lista TODAS las tablas por módulo (106)\n• Flechas: relaciones inter-módulo\n• Las relaciones internas están detalladas en cada página de módulo" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="30" width="540" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_identidad" value="Identidad / Tenants\n- tenant\n- usuario\n- rol\n- permiso\n- rol_permiso\n- usuario_rol\n- sesion_usuario\n- auditoria_evento\n- preferencia_usuario\n- proveedor\n- cliente" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="180" width="300" height="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_catalogos" value="Catálogos / Geografía\n- pais\n- ciudad\n- barrio\n- tipo_inmueble\n- tipo_documento\n- banco\n- moneda\n- impuesto\n- estado_generico\n- motivo_generico" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="180" width="300" height="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_inmuebles" value="Inmuebles\n- inmueble\n- imagen_inmueble\n- caracteristica_tipo\n- caracteristica_inmueble\n- documento_inmueble\n- historial_estado_inmueble\n- visita_inmueble\n- bloqueo_calendario\n- avaluo_inmueble" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="180" width="320" height="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_contratos" value="Contratos\n- contrato\n- firma_contrato\n- anexo_contrato\n- documento_contrato\n- historial_estado_contrato\n- prorroga_contrato\n- penalidad_contrato\n- garantia_contrato\n- version_contrato\n- solicitud_arriendo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;" parent="1" vertex="1">
+                    <mxGeometry x="1090" y="180" width="340" height="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_pagos" value="Pagos / Contable\n- pago\n- registro_pago\n- factura\n- factura_detalle\n- impuesto_detalle\n- nota_credito\n- nota_debito\n- cuenta_bancaria\n- conciliacion_bancaria\n- transaccion_bancaria\n- asiento_contable\n- asiento_detalle" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;" parent="1" vertex="1">
+                    <mxGeometry x="1480" y="180" width="360" height="360" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_mant" value="Mantenimientos\n- solicitud_mantenimiento\n- orden_trabajo\n- repuesto\n- orden_repuesto\n- evidencia_mantenimiento\n- cotizacion_mantenimiento\n- aprobacion_mantenimiento\n- sla_mantenimiento\n- historial_estado_mantenimiento" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="540" width="360" height="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_notif" value="Notificaciones\n- plantilla_notificacion\n- notificacion\n- evento\n- envio_notificacion\n- preferencia_notificacion\n- webhook_externo\n- log_webhook" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;" parent="1" vertex="1">
+                    <mxGeometry x="1090" y="560" width="340" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_integr" value="Integraciones / Jobs\n- job_programado\n- job_ejecucion\n- endpoint_externo\n- mapeo_endpoint\n- log_integracion\n- cola_mensajes\n- intento_cola" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="540" width="320" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_report" value="Reportes / Snapshots\n- snapshot_mensual\n- metrica_agrupada\n- programacion_reporte\n- ejecucion_reporte\n- vista_materializada_control\n- comentario_reporte" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="540" width="300" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_chat" value="Mensajería / Chats\n- conversacion\n- conversacion_usuario\n- mensaje\n- mensaje_leido\n- adjunto_mensaje\n- denuncia_mensaje" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;" parent="1" vertex="1">
+                    <mxGeometry x="1480" y="560" width="360" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_archivos" value="Archivos / Etiquetas\n- archivo\n- archivo_relacion\n- tag\n- entidad_tag\n- favorito\n- tarea" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="860" width="320" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="gg_inm_id" style="endArrow=classic;strokeColor=#666666;" parent="1" source="g_inmuebles" target="g_identidad" edge="1"/>
+                <mxCell id="gg_con_inm" style="endArrow=classic;strokeColor=#666666;" parent="1" source="g_contratos" target="g_inmuebles" edge="1"/>
+                <mxCell id="gg_con_id" style="endArrow=classic;dashed=1;" parent="1" source="g_contratos" target="g_identidad" edge="1"/>
+                <mxCell id="gg_pag_con" style="endArrow=classic;strokeColor=#666666;" parent="1" source="g_pagos" target="g_contratos" edge="1"/>
+                <mxCell id="gg_pag_cat" style="endArrow=classic;dashed=1;" parent="1" source="g_pagos" target="g_catalogos" edge="1"/>
+                <mxCell id="gg_mant_inm" style="endArrow=classic;strokeColor=#666666;" parent="1" source="g_mant" target="g_inmuebles" edge="1"/>
+                <mxCell id="gg_not_id" style="endArrow=classic;strokeColor=#666666;" parent="1" source="g_notif" target="g_identidad" edge="1"/>
+                <mxCell id="gg_not_con" style="endArrow=classic;dashed=1;" parent="1" source="g_notif" target="g_contratos" edge="1"/>
+                <mxCell id="gg_not_pag" style="endArrow=classic;dashed=1;" parent="1" source="g_notif" target="g_pagos" edge="1"/>
+                <mxCell id="gg_not_mant" style="endArrow=classic;dashed=1;" parent="1" source="g_notif" target="g_mant" edge="1"/>
+                <mxCell id="gg_arch_id" style="endArrow=classic;dashed=1;" parent="1" source="g_archivos" target="g_identidad" edge="1"/>
+                <mxCell id="gg_arch_inm" style="endArrow=classic;dashed=1;" parent="1" source="g_archivos" target="g_inmuebles" edge="1"/>
+                <mxCell id="gg_arch_con" style="endArrow=classic;dashed=1;" parent="1" source="g_archivos" target="g_contratos" edge="1"/>
+                <mxCell id="gg_chat_id" style="endArrow=classic;strokeColor=#666666;" parent="1" source="g_chat" target="g_identidad" edge="1"/>
+                <mxCell id="gg_rep_all" style="endArrow=classic;dashed=1;" parent="1" source="g_report" target="g_contratos" edge="1"/>
+                <mxCell id="gg_rep_all2" style="endArrow=classic;dashed=1;" parent="1" source="g_report" target="g_pagos" edge="1"/>
+                <mxCell id="gg_rep_all3" style="endArrow=classic;dashed=1;" parent="1" source="g_report" target="g_mant" edge="1"/>
+                <mxCell id="gg_integr_misc" style="endArrow=classic;dashed=1;" parent="1" source="g_integr" target="g_notif" edge="1"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

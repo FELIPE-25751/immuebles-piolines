@@ -93,6 +93,7 @@ def reportes_generales(request):
     total_pagos_pendientes = pagos.filter(estado='pendiente').aggregate(total=Sum('monto'))['total'] or 0
     mantenimientos_activos = mantenimientos.exclude(estado__in=['completado','cancelado','rechazado']).count()
     contratos_vigentes = contratos.filter(estado='activo').count()
+    contratos_vencidos = contratos.filter(estado='vencido').count()
 
     context = {
         'inmuebles': inmuebles,
@@ -106,6 +107,7 @@ def reportes_generales(request):
         'total_pagos_pendientes': total_pagos_pendientes,
         'mantenimientos_activos': mantenimientos_activos,
         'contratos_vigentes': contratos_vigentes,
+        'contratos_vencidos': contratos_vencidos,
     }
     return render(request, 'core/reportes_generales.html', context)
 

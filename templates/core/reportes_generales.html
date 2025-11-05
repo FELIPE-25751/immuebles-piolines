@@ -77,6 +77,18 @@
                 </div>
             </div>
 
+            <!-- KPIs adicionales -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body text-center">
+                            <h5>Contratos Vencidos</h5>
+                            <h2>{{ contratos_vencidos|default:0 }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Tablas de detalle -->
             <ul class="nav nav-tabs mb-3" id="reporteTabs" role="tablist">
                 <li class="nav-item" role="presentation">
