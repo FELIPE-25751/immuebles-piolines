@@ -17,7 +17,23 @@
                 <td>{{ c.numero_contrato }}</td>
                 <td>{{ c.inmueble.titulo }}</td>
                 <td>{{ c.inquilino.get_full_name }}</td>
-                <td><span class="badge bg-{{ c.estado|yesno:'success,warning,danger' }}">{{ c.get_estado_display }}</span></td>
+                <td>
+                    {% if c.estado == 'activo' %}
+                    <span class="badge bg-success">{{ c.get_estado_display }}</span>
+                    {% elif c.estado == 'pendiente_firma' %}
+                    <span class="badge bg-warning text-dark">{{ c.get_estado_display }}</span>
+                    {% elif c.estado == 'borrador' %}
+                    <span class="badge bg-secondary">{{ c.get_estado_display }}</span>
+                    {% elif c.estado == 'vencido' %}
+                    <span class="badge bg-danger">{{ c.get_estado_display }}</span>
+                    {% elif c.estado == 'finalizado' %}
+                    <span class="badge bg-dark">{{ c.get_estado_display }}</span>
+                    {% elif c.estado == 'cancelado' %}
+                    <span class="badge bg-dark">{{ c.get_estado_display }}</span>
+                    {% else %}
+                    <span class="badge bg-light text-dark">{{ c.get_estado_display }}</span>
+                    {% endif %}
+                </td>
                 <td>{{ c.fecha_inicio|date:'d/m/Y' }}</td>
                 <td>{{ c.fecha_fin|date:'d/m/Y' }}</td>
             </tr>
