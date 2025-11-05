@@ -6,6 +6,11 @@ set -e
 # Forzar redeploy Railway - commit de prueba
 
 
+# Instalar dependencias por si el build no las instaló
+echo "Instalando dependencias de requirements.txt..."
+pip install --upgrade pip
+pip install -r requirements.txt
+
 # Ejecutar makemigrations antes de migrar
 echo "Generando nuevas migraciones..."
 python manage.py makemigrations --noinput

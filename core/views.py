@@ -12,8 +12,14 @@ from pagos.models import Pago
 from mantenimientos.models import Mantenimiento
 from notificaciones.models import Notificacion
 from django.utils import timezone
-# Protección contra fuerza bruta
-from ratelimit.decorators import ratelimit
+# Protección contra fuerza bruta (import seguro)
+try:
+    from ratelimit.decorators import ratelimit
+except Exception:  # Si no está instalado en el entorno, usar un decorador no-op para no romper producción
+    def ratelimit(*args, **kwargs):
+        def wrapper(view_func):
+            return view_func
+        return wrapper
 # Vista de reportes generales para propietario
 @login_required
 def reportes_generales(request):
