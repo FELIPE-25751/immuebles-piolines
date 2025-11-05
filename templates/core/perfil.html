@@ -50,10 +50,10 @@
                 <div class="card text-center">
                     <div class="card-body">
                         <h2 class="text-primary">
-                            {% if user.tipo_usuario == 'propietario %}
+                            {% if user.tipo_usuario == 'propietario' %}
                             {{ user.inmuebles_propietario.count }}
                             {% else %}
-                            {{ user.contratos_inquilino.filter.count }}
+                            {{ user.contratos_inquilino.count }}
                             {% endif %}
                         </h2>
                         <p class="mb-0">
@@ -70,7 +70,7 @@
             <div class="col-md-4">
                 <div class="card text-center">
                     <div class="card-body">
-                        <h2 class="text-success">{{ user.contratos_inquilino.filter.count|default:0 }}</h2>
+                        <h2 class="text-success">{{ user.contratos_inquilino.count|default:0 }}</h2>
                         <p class="mb-0">Contratos</p>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
             <div class="col-md-4">
                 <div class="card text-center">
                     <div class="card-body">
-                        <h2 class="text-warning">{{ user.notificaciones.filter.count|default:0 }}</h2>
+                        <h2 class="text-warning">{{ user.notificaciones.count|default:0 }}</h2>
                         <p class="mb-0">Notificaciones</p>
                     </div>
                 </div>
