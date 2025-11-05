@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -191,7 +192,7 @@ def agregar_seguimiento(request, mantenimiento_id):
                 titulo='Nuevo Seguimiento',
                 mensaje=f'Nuevo comentario en {mantenimiento.numero_ticket}',
                 tipo='mantenimiento',
-                enlace=f'/mantenimientos/{mantenimiento.id}/'
+                enlace=reverse('mantenimientos:detalle', args=[mantenimiento.id])
             )
             
             messages.success(request, 'Seguimiento agregado exitosamente.')
@@ -236,7 +237,7 @@ def cancelar_mantenimiento(request, mantenimiento_id):
             titulo='Mantenimiento Cancelado',
             mensaje=f'El mantenimiento {mantenimiento.numero_ticket} ha sido cancelado',
             tipo='mantenimiento',
-            enlace=f'/mantenimientos/{mantenimiento.id}/'
+            enlace=reverse('mantenimientos:detalle', args=[mantenimiento.id])
         )
         
         messages.success(request, 'Mantenimiento cancelado exitosamente.')

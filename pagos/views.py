@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -70,7 +71,7 @@ def cambiar_estado_pago(request, pago_id):
                 titulo='Estado de pago actualizado',
                 mensaje=mensaje,
                 tipo='pago',
-                enlace=f'/pagos/{pago.id}/'
+                enlace=reverse('pagos:detalle', args=[pago.id])
             )
             messages.success(request, f'El estado del pago fue actualizado a {nuevo_estado}.')
         else:
@@ -187,7 +188,7 @@ def registrar_pago(request, pago_id):
                     titulo='Nuevo Pago Registrado',
                     mensaje=f'Se ha registrado un pago de ${registro.monto:,.0f} para {pago.concepto}',
                     tipo='pago',
-                    enlace=f'/pagos/{pago.id}/'
+                    enlace=reverse('pagos:detalle', args=[pago.id])
                 )
             
             messages.success(request, 'Pago registrado exitosamente.')
@@ -249,7 +250,7 @@ def marcar_pagado(request, pago_id):
         titulo='Pago confirmado por el propietario',
         mensaje=f'El propietario ha marcado como pagado el pago {pago.numero_pago}.',
         tipo='pago',
-        enlace=f'/pagos/{pago.id}/'
+        enlace=reverse('pagos:detalle', args=[pago.id])
     )
 
     messages.success(request, 'Pago marcado como pagado correctamente.')
@@ -283,7 +284,7 @@ def marcar_vencido(request, pago_id):
         titulo='Pago marcado como vencido',
         mensaje=f'El propietario ha marcado como vencido el pago {pago.numero_pago}.',
         tipo='pago',
-        enlace=f'/pagos/{pago.id}/'
+        enlace=reverse('pagos:detalle', args=[pago.id])
     )
 
     messages.success(request, 'Pago marcado como vencido.')

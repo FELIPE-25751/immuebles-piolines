@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
@@ -92,7 +93,7 @@ def crear_contrato(request):
                 titulo='Nuevo Contrato',
                 mensaje=f'Se ha creado un nuevo contrato para {contrato.inmueble.titulo}',
                 tipo='contrato',
-                enlace=f'/contratos/{contrato.id}/'
+                enlace=reverse('contratos:detalle', args=[contrato.id])
             )
             
             messages.success(request, 'Contrato creado exitosamente.')
@@ -199,7 +200,7 @@ def firmar_contrato(request, contrato_id):
                     titulo='Contrato Activado',
                     mensaje=f'El contrato {contrato.numero_contrato} ha sido firmado y activado',
                     tipo='contrato',
-                    enlace=f'/contratos/{contrato.id}/'
+                    enlace=reverse('contratos:detalle', args=[contrato.id])
                 )
                 
                 Notificacion.objects.create(
@@ -207,7 +208,7 @@ def firmar_contrato(request, contrato_id):
                     titulo='Contrato Activado',
                     mensaje=f'El contrato {contrato.numero_contrato} ha sido firmado y activado',
                     tipo='contrato',
-                    enlace=f'/contratos/{contrato.id}/'
+                    enlace=reverse('contratos:detalle', args=[contrato.id])
                 )
             else:
                 contrato.estado = 'pendiente_firma'
@@ -248,7 +249,7 @@ def cancelar_contrato(request, contrato_id):
             titulo='Contrato Cancelado',
             mensaje=f'El contrato {contrato.numero_contrato} ha sido cancelado',
             tipo='contrato',
-            enlace=f'/contratos/{contrato.id}/'
+            enlace=reverse('contratos:detalle', args=[contrato.id])
         )
         
         messages.success(request, 'Contrato cancelado exitosamente.')
