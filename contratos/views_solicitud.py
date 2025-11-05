@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
@@ -32,8 +33,8 @@ def solicitar_inmueble(request, inmueble_id):
                 usuario=inmueble.propietario,
                 titulo='Nueva solicitud de arriendo',
                 mensaje=f'{user.get_full_name()} ha solicitado arrendar tu inmueble "{inmueble.titulo}".',
-                tipo='solicitud',
-                enlace=f'/solicitudes/'
+                tipo='contrato',
+                enlace=reverse('contratos:solicitudes_recibidas')
             )
             messages.success(request, 'Solicitud enviada correctamente. El propietario será notificado.')
         return redirect('inmuebles:detalle', inmueble_id=inmueble.id)

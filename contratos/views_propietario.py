@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
@@ -44,7 +45,7 @@ def responder_solicitud(request, solicitud_id, accion):
             titulo='Solicitud aceptada',
             mensaje=f'Tu solicitud para el inmueble "{solicitud.inmueble.titulo}" fue aceptada. Ya puedes firmar el contrato.',
             tipo='contrato',
-            enlace=f'/contratos/detalle/{contrato.id}/'
+            enlace=reverse('contratos:detalle', args=[contrato.id])
         )
         messages.success(request, 'Solicitud aceptada y contrato generado.')
     elif accion == 'rechazar':
@@ -55,8 +56,8 @@ def responder_solicitud(request, solicitud_id, accion):
             usuario=solicitud.inquilino,
             titulo='Solicitud rechazada',
             mensaje=f'Tu solicitud para el inmueble "{solicitud.inmueble.titulo}" fue rechazada.',
-            tipo='solicitud',
-            enlace=f'/inmuebles/detalle/{solicitud.inmueble.id}/'
+            tipo='contrato',
+            enlace=reverse('inmuebles:detalle', args=[solicitud.inmueble.id])
         )
         messages.info(request, 'Solicitud rechazada.')
     return redirect('contratos:solicitudes_recibidas')

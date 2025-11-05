@@ -50,6 +50,8 @@ def marcar_como_leida(request, notificacion_id):
         enlace = notificacion.enlace.strip()
         # Normalizar enlaces antiguos a rutas actuales
         try:
+            if enlace == '/solicitudes/' or enlace == 'solicitudes/':
+                return redirect(reverse('contratos:solicitudes_recibidas'))
             m = re.match(r'^/contratos/(\d+)/$', enlace)
             if m:
                 return redirect(reverse('contratos:detalle', args=[int(m.group(1))]))
