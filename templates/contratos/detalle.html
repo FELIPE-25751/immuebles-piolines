@@ -197,6 +197,12 @@
                         {{ contrato.fecha_activacion|date:"d/m/Y" }}
                     </p>
                     {% endif %}
+                    {% if contrato.fecha_cierre %}
+                    <p class="mb-2">
+                        <strong>Cerrado:</strong><br>
+                        {{ contrato.fecha_cierre|date:"d/m/Y" }}
+                    </p>
+                    {% endif %}
                     <p class="mb-0">
                         <strong>Duración:</strong><br>
                         {{ contrato.duracion_meses }} meses
@@ -214,6 +220,17 @@
                     <a href="{% url 'contratos:editar' contrato.id %}" class="btn btn-warning w-100 mb-2">
                         <i class="fas fa-edit"></i> Editar Contrato
                     </a>
+                    {% endif %}
+                    {% if user == contrato.inmueble.propietario and contrato.estado == 'activo' %}
+                    <a href="{% url 'contratos:vencer' contrato.id %}" class="btn btn-danger w-100 mb-2">
+                        <i class="fas fa-flag"></i> Dar por Vencido
+                    </a>
+                    {% endif %}
+                    {% if contrato.motivo_cierre %}
+                    <div class="alert alert-danger mt-2">
+                        <strong>Motivo de cierre:</strong><br>
+                        {{ contrato.motivo_cierre|linebreaksbr }}
+                    </div>
                     {% endif %}
                 </div>
             </div>

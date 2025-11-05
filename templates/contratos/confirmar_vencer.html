@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Marcar como Vencido - Contrato{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Marcar Contrato como VENCIDO</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Vas a marcar el contrato <strong>{{ contrato.numero_contrato }}</strong> del inmueble
+                        <strong>{{ contrato.inmueble.titulo }}</strong> como <span class="badge bg-danger">VENCIDO</span>.
+                    </p>
+                    <p class="text-muted">Esta acción moverá el contrato a la pestaña de Vencidos y dejará el inmueble disponible si no hay otros contratos activos.</p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.motivo.label }}</label>
+                            {{ form.motivo }}
+                            {% if form.motivo.errors %}
+                            <div class="text-danger small">{{ form.motivo.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-check mb-3">
+                            {{ form.confirmar }}
+                            <label class="form-check-label" for="id_confirmar">{{ form.confirmar.label }}</label>
+                            {% if form.confirmar.errors %}
+                            <div class="text-danger small">{{ form.confirmar.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'contratos:detalle' contrato.id %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver sin cambios
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-flag"></i> Marcar como Vencido
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

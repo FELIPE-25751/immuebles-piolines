@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.core.paginator import Paginator
 from .models import Contrato, FirmaDigital
-from .forms import ContratoForm, FirmaContratoForm, BusquedaContratoForm
+from .forms import ContratoForm, FirmaContratoForm, BusquedaContratoForm, VencerContratoForm
 from notificaciones.models import Notificacion
 from pagos.models import Pago
 from datetime import timedelta
@@ -43,6 +43,7 @@ def listar_contratos(request):
     context = {
         'contratos': page_obj,
         'form': form,
+        'estado_filtro': request.GET.get('estado', 'todos'),
     }
     return render(request, 'contratos/listar.html', context)
 
@@ -256,6 +257,56 @@ def cancelar_contrato(request, contrato_id):
         return redirect('contratos:detalle', contrato_id=contrato.id)
     
     return render(request, 'contratos/confirmar_cancelar.html', {'contrato': contrato})
+
+
+@login_required
+def vencer_contrato(request, contrato_id):
+    """Permite al propietario marcar un contrato como VENCIDO con motivo."""
+    contrato = get_object_or_404(Contrato, id=contrato_id)
+
+    # Solo el propietario del inmueble puede vencer, y solo si está ACTIVO
+    if contrato.inmueble.propietario != request.user:
+        messages.error(request, 'No tienes permiso para vencer este contrato.')
+        return redirect('contratos:detalle', contrato_id=contrato.id)
+    if contrato.estado != 'activo':
+        messages.error(request, 'Solo se pueden vencer contratos en estado ACTIVO.')
+        return redirect('contratos:detalle', contrato_id=contrato.id)
+
+    if request.method == 'POST':
+        form = VencerContratoForm(request.POST)
+        if form.is_valid():
+            motivo = form.cleaned_data['motivo']
+            contrato.estado = 'vencido'
+            contrato.motivo_cierre = motivo
+            contrato.fecha_cierre = timezone.now()
+            contrato.save()
+            contrato.save_to_firebase()
+
+            # Notificar a ambas partes
+            Notificacion.objects.create(
+                usuario=contrato.inquilino,
+                titulo='Contrato marcado como VENCIDO',
+                mensaje=f'El propietario marcó el contrato {contrato.numero_contrato} como VENCIDO. Motivo: {motivo[:240]}',
+                tipo='contrato',
+                enlace=reverse('contratos:detalle', args=[contrato.id])
+            )
+            Notificacion.objects.create(
+                usuario=contrato.inmueble.propietario,
+                titulo='Contrato marcado como VENCIDO',
+                mensaje=f'Se marcó el contrato {contrato.numero_contrato} como VENCIDO. Motivo: {motivo[:240]}',
+                tipo='contrato',
+                enlace=reverse('contratos:detalle', args=[contrato.id])
+            )
+
+            messages.success(request, 'El contrato fue marcado como VENCIDO.')
+            return redirect('contratos:detalle', contrato_id=contrato.id)
+    else:
+        form = VencerContratoForm()
+
+    return render(request, 'contratos/confirmar_vencer.html', {
+        'contrato': contrato,
+        'form': form,
+    })
 
 
 def generar_pagos_contrato(contrato):

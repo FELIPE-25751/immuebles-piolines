@@ -81,6 +81,21 @@ class BusquedaContratoForm(forms.Form):
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
+
+
+class VencerContratoForm(forms.Form):
+    """Formulario para marcar un contrato como vencido con motivo."""
+    motivo = forms.CharField(
+        label='Motivo del vencimiento',
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Describe brevemente el incumplimiento o la razón del vencimiento'}),
+        max_length=1000,
+        required=True
+    )
+    confirmar = forms.BooleanField(
+        required=True,
+        label='Confirmo que deseo marcar este contrato como VENCIDO',
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
     
     fecha_desde = forms.DateField(
         required=False,

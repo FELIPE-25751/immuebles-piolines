@@ -63,6 +63,9 @@ class Contrato(models.Model):
     
     # Metadata
     activo = models.BooleanField(default=True)
+    # Cierre
+    motivo_cierre = models.TextField(blank=True)
+    fecha_cierre = models.DateTimeField(null=True, blank=True)
     
     class Meta:
         verbose_name = 'Contrato'
@@ -85,7 +88,7 @@ class Contrato(models.Model):
         if self.estado == 'activo':
             self.inmueble.estado = 'arrendado'
             self.inmueble.save()
-        elif self.estado in ['finalizado', 'cancelado']:
+        elif self.estado in ['finalizado', 'cancelado', 'vencido']:
             # Verificar si hay otros contratos activos
             otros_activos = Contrato.objects.filter(
                 inmueble=self.inmueble,
