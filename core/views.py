@@ -122,7 +122,7 @@ def registro(request):
     """Vista de registro de usuarios"""
     if request.user.is_authenticated:
         return redirect('core:dashboard')
-    
+    extra = {}
     if request.method == 'POST':
         # Verificar Turnstile si está configurado
         if settings.TURNSTILE_SECRET_KEY:
@@ -163,10 +163,14 @@ def registro(request):
             return redirect('core:dashboard')
         else:
             messages.error(request, 'Por favor corrige los errores en el formulario.')
+            # Si no hay Turnstile, regenerar el desafío para el re-render
+            if not settings.TURNSTILE_SECRET_KEY:
+                extra = _prepare_simple_captcha(request)
     else:
         form = RegistroForm()
         # Preparar desafío solo si no hay Turnstile
-        extra = _prepare_simple_captcha(request) if not settings.TURNSTILE_SECRET_KEY else {}
+        if not settings.TURNSTILE_SECRET_KEY:
+            extra = _prepare_simple_captcha(request)
     
     return render(request, 'core/registro.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY, **extra})
 
@@ -177,7 +181,7 @@ def login_view(request):
     """Vista de inicio de sesión"""
     if request.user.is_authenticated:
         return redirect('core:dashboard')
-    
+    extra = {}
     if request.method == 'POST':
         # Verificar Turnstile si está configurado
         if settings.TURNSTILE_SECRET_KEY:
@@ -221,10 +225,14 @@ def login_view(request):
                 return redirect('core:dashboard')
         else:
             messages.error(request, 'Usuario o contraseña incorrectos.')
+            # Si no hay Turnstile, regenerar el desafío para reintentar
+            if not settings.TURNSTILE_SECRET_KEY:
+                extra = _prepare_simple_captcha(request)
     else:
         form = LoginForm()
         # Preparar desafío solo si no hay Turnstile
-        extra = _prepare_simple_captcha(request) if not settings.TURNSTILE_SECRET_KEY else {}
+        if not settings.TURNSTILE_SECRET_KEY:
+            extra = _prepare_simple_captcha(request)
     
     return render(request, 'core/login.html', {'form': form, 'turnstile_site_key': settings.TURNSTILE_SITE_KEY, **extra})
 
